@@ -113,6 +113,8 @@ namespace OrderTakerProject.Repository.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("SKUId");
+
                     b.ToTable("PurchaseItems");
                 });
 
@@ -213,6 +215,17 @@ namespace OrderTakerProject.Repository.Migrations
                         .IsUnique();
 
                     b.ToTable("SKUs");
+                });
+
+            modelBuilder.Entity("OrderTakerProject.Repository.Models.Entity.PurchaseItem", b =>
+                {
+                    b.HasOne("OrderTakerProject.Repository.Models.Entity.SKU", "SKU")
+                        .WithMany()
+                        .HasForeignKey("SKUId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("SKU");
                 });
 
             modelBuilder.Entity("OrderTakerProject.Repository.Models.Entity.PurchaseOrder", b =>

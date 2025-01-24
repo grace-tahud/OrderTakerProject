@@ -34,20 +34,24 @@ namespace OrderTakerProject.Repository.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "PurchaseItems",
+                name: "SKUs",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PurchaseOrderId = table.Column<int>(type: "int", nullable: false),
-                    SKUId = table.Column<int>(type: "int", nullable: false),
-                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    SKUImage = table.Column<byte[]>(type: "varbinary(max)", nullable: true),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Timestamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
+                    Timestamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
+                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_PurchaseItems", x => x.Id);
+                    table.PrimaryKey("PK_SKUs", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -69,26 +73,36 @@ namespace OrderTakerProject.Repository.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_PurchaseOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PurchaseOrders_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "SKUs",
+                name: "PurchaseItems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Code = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    UnitPrice = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
-                    IsActive = table.Column<bool>(type: "bit", nullable: false),
+                    PurchaseOrderId = table.Column<int>(type: "int", nullable: false),
+                    SKUId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     UserId = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Timestamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false),
-                    DateCreated = table.Column<DateTime>(type: "datetime2", nullable: true),
-                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Timestamp = table.Column<byte[]>(type: "rowversion", rowVersion: true, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_SKUs", x => x.Id);
+                    table.PrimaryKey("PK_PurchaseItems", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_PurchaseItems_SKUs_SKUId",
+                        column: x => x.SKUId,
+                        principalTable: "SKUs",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
@@ -102,6 +116,16 @@ namespace OrderTakerProject.Repository.Migrations
                 table: "Customers",
                 column: "MobileNumber",
                 unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PurchaseItems_SKUId",
+                table: "PurchaseItems",
+                column: "SKUId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_PurchaseOrders_CustomerId",
+                table: "PurchaseOrders",
+                column: "CustomerId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SKUs_Code",
@@ -120,9 +144,6 @@ namespace OrderTakerProject.Repository.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Customers");
-
-            migrationBuilder.DropTable(
                 name: "PurchaseItems");
 
             migrationBuilder.DropTable(
@@ -130,6 +151,9 @@ namespace OrderTakerProject.Repository.Migrations
 
             migrationBuilder.DropTable(
                 name: "SKUs");
+
+            migrationBuilder.DropTable(
+                name: "Customers");
         }
     }
 }
