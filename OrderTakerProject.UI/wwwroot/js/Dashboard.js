@@ -183,7 +183,7 @@ function openUpdateSKUModal(skuId) {
         SKUId: skuId,
         Name:''
     };
-    console.log(request);
+    //console.log(request);
     $.ajax({
         url: 'https://localhost:7043/api/order/taker/GetSKUById',
         type: 'POST',
@@ -191,7 +191,7 @@ function openUpdateSKUModal(skuId) {
         dataType: "json",
         data: JSON.stringify(request),
         success: function (sku) {
-            console.log(sku);
+            //console.log(sku);
             $('#skuId').val(skuId);
             $('#Update_Name').val(sku.sku.name);
             $('#Update_Code').val(sku.sku.code);

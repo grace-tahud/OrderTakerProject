@@ -16,12 +16,22 @@
                     //console.log(data);
                     response($.map(data, function (customer) {
                         //console.log(customer);
-                        return {
-                            label: customer.fullName,
-                            value: customer.fullName,
-                            id: customer.id
-                             
-                        };
+                        if (customer != null) {
+                            return {
+                                label: customer.fullName,
+                                value: customer.fullName,
+                                id: customer.id
+
+                            };
+                        } else {
+                            return {
+                                label: '',
+                                value: '',
+                                id: 0
+
+                            };
+                        }
+                        
                         
                     }));
                 }, 
@@ -55,13 +65,24 @@
                     //console.log(data);
                     response($.map(data, function (sku) {
                         //console.log(sku);
-                        return {
-                            label: sku.name,
-                            value: sku.name,
-                            id: sku.id,
-                            price: sku.unitPrice
+                        if (sku != null) {
+                            return {
+                                label: sku.name,
+                                value: sku.name,
+                                id: sku.id,
+                                price: sku.unitPrice
 
-                        };
+                            };
+                        } else {
+                            return {
+                                label: '',
+                                value: '',
+                                id: 0,
+                                price: 0
+
+                            };
+                        }
+                        
 
                     }));
                 },
@@ -101,12 +122,21 @@ $(document).ready(function () {
                     //console.log(data);
                     response($.map(data, function (customer) {
                         //console.log(customer);
-                        return {
-                            label: customer.fullName,
-                            value: customer.fullName,
-                            id: customer.id
+                        if (customer != null) {
+                            return {
+                                label: customer.fullName,
+                                value: customer.fullName,
+                                id: customer.id
 
-                        };
+                            };
+                        } else {
+                            return {
+                                label: '',
+                                value: '',
+                                id: 0
+
+                            };
+                        }
 
                     }));
                 },
@@ -138,13 +168,23 @@ $(document).ready(function () {
                     //console.log(data);
                     response($.map(data, function (sku) {
                         //console.log(sku);
-                        return {
-                            label: sku.name,
-                            value: sku.name,
-                            id: sku.id,
-                            price: sku.unitPrice
+                        if (sku != null) {
+                            return {
+                                label: sku.name,
+                                value: sku.name,
+                                id: sku.id,
+                                price: sku.unitPrice
 
-                        };
+                            };
+                        } else {
+                            return {
+                                label: '',
+                                value: '',
+                                id: 0,
+                                price: 0
+
+                            };
+                        }
 
                     }));
                 },
