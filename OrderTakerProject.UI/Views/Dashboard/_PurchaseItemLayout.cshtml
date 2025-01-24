@@ -1,0 +1,44 @@
+﻿@model OrderTakerProject.UI.Models.PurchaseItemViewModel
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-6 align-self-center">
+        </div>
+        
+        @{
+            if (Model.PurchaseItems != null && Model.PurchaseItems.Any())
+            {
+
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">SKU</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Price</th>
+                            <th scope="col"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.PurchaseItems)
+                        {
+                            <tr>
+                                <th scope="row">@item.SKU</th>
+                                <td>@item.Quantity</td>
+                                <td>@item.Price</td>
+                                <th scope="col">
+                                    <button onclick="openUpdatePurchaseItemModal(@item.Id)"
+                                            class="btn btn-primary">
+                                        Update
+                                    </button>
+
+                                </th>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            }
+        }
+    </div>
+
+
+</div>

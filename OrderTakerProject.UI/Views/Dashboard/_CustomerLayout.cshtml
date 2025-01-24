@@ -1,0 +1,50 @@
+﻿@model OrderTakerProject.UI.Models.CustomerViewModel
+
+<div class="row">
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addCustomerModal">
+        Add Customer
+    </button>
+    <br />
+    @{
+        if (Model.Customers != null && Model.Customers.Any())
+        {
+
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Full Name</th>
+                        <th scope="col">Mobile Number</th>
+                        <th scope="col">City</th>
+                        <th scope="col">Is Active?</th>
+                        <th scope="col"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var customer in Model.Customers)
+                    {
+                        <tr>
+                            <th scope="row">@customer.FullName</th>
+                            <td>@customer.MobileNumber</td>
+                            <td>@customer.City</td>
+                            <td>@customer.IsActive</td>
+                            <th scope="col">
+                                <button onclick="openUpdateCustomerModal(@customer.Id)"
+                                        class="btn btn-primary">
+                                    Update
+                                </button>
+                                
+                            </th>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+        }
+    }
+
+    <!-- Button trigger modal -->
+</div>
+
+<partial name="_AddCustomer.cshtml" />
+<partial name="_UpdateCustomer.cshtml" />
+

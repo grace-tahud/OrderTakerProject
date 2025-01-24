@@ -1,0 +1,47 @@
+﻿@model OrderTakerProject.UI.Models.OrderViewModel
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 align-self-center">
+            <a class="btn btn-outline-primary" asp-controller="Dashboard" asp-action="AddOrder">Add Order</a>
+            @{
+                if (Model.PurchaseOrders != null && Model.PurchaseOrders.Any())
+                {
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">Customer</th>
+                                <th scope="col">Delivery Date</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Amount Due</th>
+                                <th scope="col">Is Active?</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model.PurchaseOrders)
+                            {
+                                <tr>
+                                    <th scope="row">@order.CustomerName</th>
+                                    <td>@order.DateOfDelivery.ToString("MMM dd yyyy")</td>
+                                    <td>@order.Status</td>
+                                    <td>@order.AmountDue</td>
+                                    <td>@order.IsActive</td>
+                                    <th scope="col">
+                                        <a class="btn btn-outline-primary" asp-controller="Dashboard" asp-action="UpdateOrder" asp-route-id="@order.Id">Update Order</a>
+
+                                    </th>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                }
+            }
+        </div>
+       
+    </div>
+
+    
+</div>

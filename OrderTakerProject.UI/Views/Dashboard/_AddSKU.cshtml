@@ -1,0 +1,42 @@
+﻿@model OrderTakerProject.UI.Models.SKUViewModel
+
+
+<div class="modal fade" id="addSkuModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add SKU</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <label asp-for="SKU.Name" class="form-label">Name <small class="text-danger">*</small></label>
+                    <input asp-for="SKU.Name" class="form-control" id="SKUName" />
+                    <span asp-validation-for="SKU.Name" class="text-danger"></span>
+                    <br />
+                    <label asp-for="SKU.Code" class="form-label">Code <small class="text-danger">*</small></label>
+                    <input asp-for="SKU.Code" class="form-control" id="SKUCode" />
+                    <span asp-validation-for="SKU.Code" class="text-danger"></span>
+                    <br />
+                    <label asp-for="SKU.UnitPrice" class="form-label">Unit Price <small class="text-danger">*</small></label>
+                    <input asp-for="SKU.UnitPrice" class="form-control" id="SKUUnitPrice" />
+                    <span asp-validation-for="SKU.UnitPrice" class="text-danger"></span>
+                    <br />
+                    <label asp-for="SKU.SKUImage" class="form-label">Select Image <small class="text-danger">*</small></label>
+                    <input asp-for="SKU.SKUImage" class="form-control" type="file" id="ImageSelector" />
+                    <span asp-validation-for="SKU.SKUImage" class="text-danger"></span>
+
+                    <textarea style="display:none;" id="SKUImage" readonly placeholder="Base64 encoded image will appear here..."></textarea>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="return AddSKU();">Save</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/js/imageloader.js"></script>

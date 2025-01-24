@@ -1,0 +1,44 @@
+﻿@model OrderTakerProject.UI.Models.CustomerViewModel
+
+
+<div class="modal fade" id="updateCustomerModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Update Customer</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input type="hidden" id="customerId" />
+                    <label asp-for="Customer.FirstName" class="form-label">First Name <small class="text-danger">*</small></label>
+                    <input asp-for="Customer.FirstName" class="form-control" id="Update_FirstName" />
+                    <span asp-validation-for="Customer.FirstName" class="text-danger"></span>
+                    <br />
+                    <label asp-for="Customer.LastName" class="form-label">Last Name <small class="text-danger">*</small></label>
+                    <input asp-for="Customer.LastName" class="form-control" id="Update_LastName" />
+                    <span asp-validation-for="Customer.LastName" class="text-danger"></span>
+                    <br />
+                    <label asp-for="Customer.MobileNumber" class="form-label">Mobile Number <small class="text-danger">*</small></label>
+                    <input asp-for="Customer.MobileNumber" class="form-control" maxlength="10" id="Update_MobileNumber" />
+                    <span asp-validation-for="Customer.MobileNumber" class="text-danger"></span>
+                    <br />
+                    <label asp-for="Customer.City" class="form-label">City <small class="text-danger">*</small></label>
+                    <input asp-for="Customer.City" class="form-control" id="Update_City" />
+                    <span asp-validation-for="Customer.City" class="text-danger"></span>
+
+                    <label asp-for="Customer.IsActive" class="form-label"> <small class="text-danger">Is Active? *</small></label>
+                    
+                    <input asp-for="Customer.IsActive" class="form-check-input" type="checkbox" id="Update_CustomerIsActive" />
+                    <span asp-validation-for="Customer.IsActive" class="text-danger"></span>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" onclick="return UpdateCustomer();"> Update</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+
+            </div>
+        </div>
+    </div>
+</div>

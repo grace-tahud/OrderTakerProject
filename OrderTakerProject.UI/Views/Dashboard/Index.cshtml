@@ -1,0 +1,16 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+    <div class="col-md-2 border border-primary d-grid gap-2">
+        <button type="button" class="btn btn-outline-primary" id="showCustomer">
+            Customer
+        </button>
+        <button class="btn btn-outline-primary" type="button" id="showSKU">SKU</button>
+        <a class="btn btn-outline-primary"  asp-controller="Dashboard" asp-action="OrdersList">Orders</a>
+    </div>
+    <div class="col-md-8 border border-secondary" id="contentLayout">
+    </div>
+</div>
+

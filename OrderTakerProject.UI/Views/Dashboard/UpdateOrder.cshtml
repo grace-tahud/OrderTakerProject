@@ -1,0 +1,97 @@
+﻿@model OrderTakerProject.UI.Models.OrderViewModel
+
+
+
+@{
+    
+    <h1>Orders Page</h1>
+    <div class="container-fluid">
+        <div class="row">
+            <h3>Order Taking</h3>
+            <div class="col-md-6">
+                
+
+
+                <input class="form-control" type="hidden" value="@Model.PurchaseOrder.Id" id="UpdateOrderId"/>
+                <label class="form-label">Customer Name <small class="text-danger">*</small></label>
+                <input class="form-control" value="@Model.PurchaseOrder.CustomerName" id="UpdateOrderName" />
+                <input  class="form-control" id="UpdateOrderNameId" type="hidden"
+                value="@Model.PurchaseOrder.CustomerId"/>
+                <br />
+
+                <label class="form-label">Delivery Date <small class="text-danger">*</small></label>
+                <input class="form-control" id="UpdateDeliveryDate" />
+                <br />
+                <select class="form-select" aria-label="Default select example" id="UpdateOrderStatus">
+                    <option value="@Model.PurchaseOrder.Status">Select Status</option>
+                    <option value="New">New</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+                <br />
+
+                <label class="form-label">Amount Due </label>
+                <input class="form-control" value="@Model.PurchaseOrder.AmountDue" id="UpdateOrderAmount" />
+                <br />
+
+                <label  class="form-label"> Is Active? </label>
+
+                <input class="form-check-input" type="checkbox" id="UpdateOrderIsActive" />
+                
+
+                <button type="button" class="btn btn-primary" onclick="return UpdateOrder();">Save</button>
+
+            </div>
+
+
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-6 align-self-center">
+            </div>
+
+            @{
+                if (Model.PurchaseItems != null && Model.PurchaseItems.Any())
+                {
+
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th scope="col">SKU</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Price</th>
+                                <th scope="col"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model.PurchaseItems)
+                            {
+                                <tr>
+                                    <th scope="row">@item.SKU</th>
+                                    <td>@item.Quantity</td>
+                                    <td>@item.Price</td>
+                                    <th scope="col">
+                                        <button onclick="openUpdatePurchaseItemModal(@item.Id)"
+                                                class="btn btn-primary">
+                                            Update
+                                        </button>
+
+                                    </th>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                }
+            }
+        </div>
+
+
+    </div>
+}
+
+
+<partial name="_AddPurchaseItem.cshtml" />
+<partial name="_UpdatePurchaseItem.cshtml" />
