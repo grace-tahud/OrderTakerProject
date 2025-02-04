@@ -10,13 +10,13 @@ namespace OrderTakerProject.Core.Models.DTOs
     public class GetCustomersRequest
     {
     }
-    public class GetCustomersResponse
+    public class GetCustomersResponse:BaseResponse
     {
         public List<CustomerModel> Customers { get; set; }
     }
     public class CustomerModel
     {
-        [IgnoreDataMember]
+        //[IgnoreDataMember]
         public int Id { get; set; }
 
         public string FullName { get; set; }
@@ -24,9 +24,9 @@ namespace OrderTakerProject.Core.Models.DTOs
         public string City { get; set; }
         public bool IsActive { get; set; }
 
-        [IgnoreDataMember]
+        //[IgnoreDataMember]
         public string FirstName { get; set; }
-        [IgnoreDataMember]
+        //[IgnoreDataMember]
         public string LastName { get; set; }
     }
 }

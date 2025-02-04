@@ -11,7 +11,7 @@ namespace OrderTakerProject.Core.Models.DTOs
         public int PurchaseItemId { get; set; }
 
     }
-    public class GetPurchaseItemResponse
+    public class GetPurchaseItemResponse:BaseResponse
     {
         public PurchaseItemModel PurchaseItem { get; set; }
     }

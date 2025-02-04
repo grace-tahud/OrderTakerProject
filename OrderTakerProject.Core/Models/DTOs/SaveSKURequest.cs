@@ -13,8 +13,8 @@ namespace OrderTakerProject.Core.Models.DTOs
         public decimal UnitPrice { get; set; }
         public byte[]? SKUImage { get; set; }
     }
-    public class SaveSKUResponse
+    public class SaveSKUResponse:BaseResponse
     {
-        public string Message { get; set; }
+        public bool Success { get; set; }
     }
 }

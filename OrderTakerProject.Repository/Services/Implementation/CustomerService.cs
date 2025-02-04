@@ -1,4 +1,7 @@
-﻿using OrderTakerProject.Core.Models.DatabaseDTOs;
+﻿using AutoMapper;
+using OrderTakerProject.Core.Enumerations;
+using OrderTakerProject.Core.Models.DatabaseDTOs;
+using OrderTakerProject.Core.Models.DTOs;
 using OrderTakerProject.Repository.Models.Entity;
 using OrderTakerProject.Repository.Services.Interface;
 using System;
@@ -13,67 +16,129 @@ namespace OrderTakerProject.Repository.Services.Implementation
     {
         private bool _disposed;
         private readonly ApplicationDbContext _context;
-        public CustomerService(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public CustomerService(ApplicationDbContext context,
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
-        public GetCustomerModel GetCustomerById(int id)
+        public GetCustomerResponse GetCustomerById(int id)
         {
-            var response = new GetCustomerModel();
-            response = _context.Customers.Where(c => c.Id == id).
-                Select(c => new GetCustomerModel
+            var response = new GetCustomerResponse();
+            try
+            {
+                var dbResponse = _context.Customers.Where(c => c.Id == id).FirstOrDefault();
+                if (dbResponse != null)
                 {
-                    Id = c.Id,
-                    FullName = c.FullName,
-                    MobileNumber =c.MobileNumber,
-                    City = c.City,
-                    IsActive = c.IsActive,
-                    FirstName = c.FirstName,
-                    LastName = c.LastName
+                    var customerModel = _mapper.Map<CustomerModel>(dbResponse);
+                    response.Customer = customerModel;
+                    response.Success = true;
+                    response.Result = new Result(BaseResponseCodes.Success);
+                }
+            }
+            catch(Exception ex)
+            {
+                response.Success = false;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+           
+            
 
-                }).FirstOrDefault();
+                //Select(c => new GetCustomerModel
+                //{
+                //    Id = c.Id,
+                //    FullName = c.FullName,
+                //    MobileNumber =c.MobileNumber,
+                //    City = c.City,
+                //    IsActive = c.IsActive,
+                //    FirstName = c.FirstName,
+                //    LastName = c.LastName
+
+                //}).FirstOrDefault();
                 ;
             return response;
         }
-        public GetCustomerModel GetCustomerByFullName(string name)
+        public GetCustomerResponse GetCustomerByFullName(string name)
         {
-            var response = new GetCustomerModel();
-            response = _context.Customers.Where(c => c.FullName.Contains(name)).
-                Select(c => new GetCustomerModel
+            var response = new GetCustomerResponse();
+            try
+            {
+                var dbResponse = _context.Customers.Where(c => c.FullName.Contains(name)).FirstOrDefault();
+                if (dbResponse != null)
                 {
-                    Id = c.Id,
-                    FullName = c.FullName,
-                    MobileNumber = c.MobileNumber,
-                    City = c.City,
-                    IsActive = c.IsActive,
-                    FirstName = c.FirstName,
-                    LastName = c.LastName
+                    var customerModel = _mapper.Map<CustomerModel>(dbResponse);
+                    response.Customer = customerModel;
+                    response.Success = true;
+                    response.Result = new Result(BaseResponseCodes.Success);
+                }
+            }
+            catch(Exception ex)
+            {
+                response.Success = false;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+            //response = _context.Customers.Where(c => c.FullName.Contains(name)).
+            //    Select(c => new GetCustomerModel
+            //    {
+            //        Id = c.Id,
+            //        FullName = c.FullName,
+            //        MobileNumber = c.MobileNumber,
+            //        City = c.City,
+            //        IsActive = c.IsActive,
+            //        FirstName = c.FirstName,
+            //        LastName = c.LastName
 
-                }).FirstOrDefault();
-            ;
+            //    }).FirstOrDefault();
+            //;
             return response;
         }
-        public List<GetCustomerModel> GetCustomers()
+        public GetCustomersResponse GetCustomers()
         {
-            var response = new List<GetCustomerModel>();
-            response = _context.Customers.
-                Select(c => new GetCustomerModel
+            var response = new GetCustomersResponse();
+            try
+            {
+                var dbResponse = _context.Customers.ToList();
+                if(dbResponse != null)
                 {
-                    Id = c.Id,
-                    FullName = c.FullName,
-                    MobileNumber = c.MobileNumber,
-                    City = c.City,
-                    IsActive = c.IsActive,
-                    FirstName = c.FirstName,
-                    LastName = c.LastName
-                }).ToList();
+                     var customersModel = _mapper.Map<List<CustomerModel>>(dbResponse);
+                    response.Customers = customersModel;
+                    response.Success = true;
+                    if (dbResponse.Any())
+                    {
+                        response.Result = new Result(BaseResponseCodes.Success);
+                    }
+                    else
+                    {
+                        response.Result = new Result(BaseResponseCodes.NoItems);
+                    }
+                }
+                               //Select(c => new GetCustomerModel
+                               //{
+                               //    Id = c.Id,
+                               //    FullName = c.FullName,
+                               //    MobileNumber = c.MobileNumber,
+                               //    City = c.City,
+                               //    IsActive = c.IsActive,
+                               //    FirstName = c.FirstName,
+                               //    LastName = c.LastName
+                               //}).ToList();
+                //response.ba
+            }
+            catch(Exception ex)
+            {
+                response.Success = false;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+           
+           
 
             return response;
         }
 
-        public DbResult SaveCustomer(SaveCustomerModel model)
+        public SaveCustomerResponse SaveCustomer(SaveCustomerModel model)
         {
-            var response = new DbResult();
+            var response = new SaveCustomerResponse();
             try
             {
                 var dbResponse = _context.Customers.Add(new Customer
@@ -85,20 +150,22 @@ namespace OrderTakerProject.Repository.Services.Implementation
                     City = model.City
                 });
                 _context.SaveChanges();
+                
                 response.Success = true;
-                response.Message = "Success";
+                response.Result = new Result(BaseResponseCodes.Success);
             }
             catch(Exception ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+               
             }
             
             return response;
         }
-        public DbResult UpdateCustomer(UpdateCustomerModel model)
+        public UpdateCustomerResponse UpdateCustomer(UpdateCustomerModel model)
         {
-            var response = new DbResult();
+            var response = new UpdateCustomerResponse();
             try
             {
                 var customer = _context.Customers.Where(c => c.Id == model.Id).FirstOrDefault();
@@ -113,12 +180,12 @@ namespace OrderTakerProject.Repository.Services.Implementation
                     _context.SaveChanges();
                 }
                 response.Success = true;
-                response.Message = "Success";
+                response.Result = new Result(BaseResponseCodes.Success);
             }
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
             }
 
             return response;

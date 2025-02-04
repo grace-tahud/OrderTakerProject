@@ -12,7 +12,7 @@ using OrderTakerProject.Repository;
 namespace OrderTakerProject.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250124070513_deployAllModels")]
+    [Migration("20250204095618_deployAllModels")]
     partial class deployAllModels
     {
         /// <inheritdoc />
@@ -116,7 +116,8 @@ namespace OrderTakerProject.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SKUId");
+                    b.HasIndex("SKUId", "PurchaseOrderId")
+                        .IsUnique();
 
                     b.ToTable("PurchaseItems");
                 });

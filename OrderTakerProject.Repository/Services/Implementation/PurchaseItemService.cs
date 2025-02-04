@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using OrderTakerProject.Core.Enumerations;
 using OrderTakerProject.Core.Models.DatabaseDTOs;
+using OrderTakerProject.Core.Models.DTOs;
 using OrderTakerProject.Repository.Models.Entity;
 using OrderTakerProject.Repository.Services.Interface;
 using System;
@@ -45,14 +48,17 @@ namespace OrderTakerProject.Repository.Services.Implementation
         #endregion
 
         private readonly ApplicationDbContext _context;
-        public PurchaseItemService(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public PurchaseItemService(ApplicationDbContext context, 
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
-        public DbResult SavePurchaseItem(SavePurchaseItemModel model)
+        public SavePurchaseItemResponse SavePurchaseItem(SavePurchaseItemModel model)
         {
-            var response = new DbResult();
+            var response = new SavePurchaseItemResponse();
             try
             {
                 var dbResponse = _context.PurchaseItems.Add(new PurchaseItem
@@ -65,20 +71,20 @@ namespace OrderTakerProject.Repository.Services.Implementation
                 });
                 _context.SaveChanges();
                 response.Success = true;
-                response.Message = "Success";
+                response.Result = new Result(BaseResponseCodes.Success);
             }
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
             }
 
             return response;
         }
 
-        public DbResult UpdatePurchaseItem(UpdatePurchaseItemModel model)
+        public UpdatePurchaseItemResponse UpdatePurchaseItem(UpdatePurchaseItemModel model)
         {
-            var response = new DbResult();
+            var response = new UpdatePurchaseItemResponse();
             try
             {
                 var purchaseItem = _context.PurchaseItems.Where(c => c.Id == model.Id).FirstOrDefault();
@@ -91,69 +97,135 @@ namespace OrderTakerProject.Repository.Services.Implementation
                     _context.SaveChanges();
                 }
                 response.Success = true;
-                response.Message = "Success";
+                response.Result = new Result(BaseResponseCodes.Success);
             }
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
             }
 
             return response;
         }
 
-        public GetPurchaseItemModel GetPurchaseItemById(int id)
+        public GetPurchaseItemResponse GetPurchaseItemById(int id)
         {
-            var response = new GetPurchaseItemModel();
-            response = _context.PurchaseItems.Where(i => i.Id == id).Include(i=>i.SKU).
-                Select(i => new GetPurchaseItemModel
+            var response = new GetPurchaseItemResponse();
+            try
+            {
+                var dbResponse = _context.PurchaseItems.Where(i => i.Id == id).Include(i => i.SKU).FirstOrDefault();
+                if (dbResponse != null)
                 {
-                    Id=i.Id,
-                    PurchaseOrderId = i.PurchaseOrderId,
-                    SKU = i.SKU.Name,
-                    SKUId = i.SKUId,
-                    Quantity = i.Quantity,
-                    UnitPrice = i.SKU.UnitPrice,
-                    Price = i.Price
+                    var purchaseItemModel = _mapper.Map<PurchaseItemModel>(dbResponse);
+                    response.PurchaseItem = purchaseItemModel;
+                    response.Success = true;
+                    response.Result = new Result(BaseResponseCodes.Success);
+                }
+            }
+            catch(Exception ex)
+            {
+                response.Success = false;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+            //response = _context.PurchaseItems.Where(i => i.Id == id).Include(i=>i.SKU).
+            //    Select(i => new GetPurchaseItemModel
+            //    {
+            //        Id=i.Id,
+            //        PurchaseOrderId = i.PurchaseOrderId,
+            //        SKU = i.SKU.Name,
+            //        SKUId = i.SKUId,
+            //        Quantity = i.Quantity,
+            //        UnitPrice = i.SKU.UnitPrice,
+            //        Price = i.Price
 
-                }).FirstOrDefault();
-            ;
+            //    }).FirstOrDefault();
+            //;
             return response;
         }
 
-        public List<GetPurchaseItemModel> GetPurchaseItems()
+        public GetPurchaseItemsResponse GetPurchaseItems()
         {
-            var response = new List<GetPurchaseItemModel>();
-            response = _context.PurchaseItems.Include(i => i.SKU).
-                Select(i => new GetPurchaseItemModel
+            var response = new GetPurchaseItemsResponse();
+            try
+            {
+                var dbResponse = _context.PurchaseItems.Include(i => i.SKU).ToList();
+                if (dbResponse != null)
                 {
-                    Id = i.Id,
-                    PurchaseOrderId = i.PurchaseOrderId,
-                    SKUId = i.SKUId,
-                    SKU = i.SKU.Name,
-                    UnitPrice = i.SKU.UnitPrice,
-                    Quantity = i.Quantity,
-                    Price = i.Price
-                }).ToList();
+                    var purchaseItemsModel = _mapper.Map<List<PurchaseItemModel>>(dbResponse);
+                    response.PurchaseItems = purchaseItemsModel;
+                    response.TotalPurchaseAmount = purchaseItemsModel.Sum(i => i.Price);
+                    response.Success = true;
+                    if (dbResponse.Any())
+                    {
+                        response.Result = new Result(BaseResponseCodes.Success);
+                    }
+                    else
+                    {
+                        response.Result = new Result(BaseResponseCodes.NoItems);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+            //
+            //response = _context.PurchaseItems.Include(i => i.SKU).
+            //    Select(i => new GetPurchaseItemModel
+            //    {
+            //        Id = i.Id,
+            //        PurchaseOrderId = i.PurchaseOrderId,
+            //        SKUId = i.SKUId,
+            //        SKU = i.SKU.Name,
+            //        UnitPrice = i.SKU.UnitPrice,
+            //        Quantity = i.Quantity,
+            //        Price = i.Price
+            //    }).ToList();
 
             return response;
         }
 
-        public List<GetPurchaseItemModel> GetPurchaseItemsByOrder(int purchaseOrderId)
+        public GetPurchaseItemsResponse GetPurchaseItemsByOrder(int purchaseOrderId)
         {
-            var response = new List<GetPurchaseItemModel>();
-            response = _context.PurchaseItems.Where(i=>i.PurchaseOrderId == purchaseOrderId).Include(i=>i.SKU).
+            var response = new GetPurchaseItemsResponse();
+            try
+            {
+                var dbResponse = _context.PurchaseItems.Where(i => i.PurchaseOrderId == purchaseOrderId).Include(i => i.SKU).ToList();
+                if (dbResponse != null)
+                {
+                    var purchaseItemsModel = _mapper.Map<List<PurchaseItemModel>>(dbResponse);
+                    response.PurchaseItems = purchaseItemsModel;
+                    response.TotalPurchaseAmount = purchaseItemsModel.Sum(i => i.Price);
+                    response.Success = true;
+                    if (dbResponse.Any())
+                    {
+                        response.Result = new Result(BaseResponseCodes.Success);
+                    }
+                    else
+                    {
+                        response.Result = new Result(BaseResponseCodes.NoItems);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+            //var response = new List<GetPurchaseItemModel>();
+            //response = _context.PurchaseItems.Where(i=>i.PurchaseOrderId == purchaseOrderId).Include(i=>i.SKU).
                 
-                Select(i => new GetPurchaseItemModel
-                {
-                    Id = i.Id,
-                    PurchaseOrderId = i.PurchaseOrderId,
-                    UnitPrice = i.SKU.UnitPrice,
-                    SKUId = i.SKUId,
-                    SKU = i.SKU.Name,
-                    Quantity = i.Quantity,
-                    Price = i.Price
-                }).ToList();
+            //    Select(i => new GetPurchaseItemModel
+            //    {
+            //        Id = i.Id,
+            //        PurchaseOrderId = i.PurchaseOrderId,
+            //        UnitPrice = i.SKU.UnitPrice,
+            //        SKUId = i.SKUId,
+            //        SKU = i.SKU.Name,
+            //        Quantity = i.Quantity,
+            //        Price = i.Price
+            //    }).ToList();
 
             return response;
         }

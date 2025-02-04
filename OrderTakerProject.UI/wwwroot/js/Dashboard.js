@@ -39,6 +39,9 @@ function AddCustomer() {
         dataType: "json",
         
         success: function (result) {
+            if (result.result.code == 99) {
+                alert(result.result.description);
+            }
             $('#addCustomerModal').modal('hide');
             $('#FirstName').val('');
             $('#LastName').val('');
@@ -307,13 +310,19 @@ function UpdateOrder() {
 }
 
 function UpdateOrderAmountDue() {
+    var amountDue = $('#Order_AmountDue').val();
 
+    if (amountDue == 0 || amountDue == '') {
+        amountDue = $('#UpdateOrderAmount').val();
+    }
+
+        
     var orderRequest = {
         Id: $('#Order_NewId').val(),
         CustomerId: $('#Order_CustomerId').val(),
         DateOfDelivery: $('#Order_DeliveryDate').val(),
         Status: $('#OrderStatus').val(),
-        AmountDue: $('#Order_AmountDue').val(),
+        AmountDue: amountDue,
         IsActive:true
     };
 
@@ -344,15 +353,18 @@ $(document).ready(function () {
         $(this).hide();
     });
 });
+//$(document).ready(function () {
 
+//    var purchaseOrderId = $('#UpdateOrderId').val()
+//});
 function AddItem() {
     var purchaseOrderId = $('#Order_NewId').val();
-    if (purchaseOrderId == '') {
+    if (purchaseOrderId == '' || purchaseOrderId == 0 || typeof value === "undefined") {
         purchaseOrderId = $('#UpdateOrderId').val()
     }
-        
+    console.log(purchaseOrderId);
     var itemRequest = {
-        PurchaseOrderId: $('#Order_NewId').val(),
+        PurchaseOrderId: purchaseOrderId,
         SKUId: $('#PurchaseItem_SKUId').val(),
         Quantity: $('#PurchaseItem_Quantity').val(),
         Price: $('#PurchaseItem_Price').val()
@@ -382,13 +394,14 @@ function AddItem() {
                 },
                 success: function (data) {
                     $('#itemsLayout').html(data);
+                    $('#itemsLayout1').html(data);
                     $('#saveOrder').removeAttr("disabled")
 
 
                     var purchaseItemRequest = {
                         PurchaseOrderId: purchaseOrderId
                     };
-                    //console.log(purchaseItemRequest);
+                   // console.log(purchaseItemRequest);
                     $.ajax({
                         url: "https://localhost:7043/api/order/taker/GetPurchaseItemsByOrder",
                         data: JSON.stringify(purchaseItemRequest),
@@ -397,7 +410,7 @@ function AddItem() {
                         dataType: "json",
 
                         success: function (result) {
-                            //console.log(result.totalPurchaseAmount);
+                            console.log(result.totalPurchaseAmount);
                             $('#Order_AmountDue').val(result.totalPurchaseAmount);
                             $('#UpdateOrderAmount').val(result.totalPurchaseAmount);
                             

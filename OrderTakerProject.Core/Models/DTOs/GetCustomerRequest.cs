@@ -12,7 +12,7 @@ namespace OrderTakerProject.Core.Models.DTOs
         public string Name { get; set; }
     }
 
-    public class GetCustomerResponse
+    public class GetCustomerResponse:BaseResponse
     {
         public CustomerModel Customer { get; set; }
     }

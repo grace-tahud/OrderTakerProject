@@ -15,8 +15,8 @@ namespace OrderTakerProject.Core.Models.DTOs
         public decimal AmountDue { get; set; }
         public bool IsActive { get; set; }
     }
-    public class UpdatePurchaseOrderResponse
+    public class UpdatePurchaseOrderResponse : BaseResponse
     {
-        public string Message { get; set; }
+        public bool Success { get; set; }
     }
 }

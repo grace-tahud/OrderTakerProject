@@ -113,7 +113,8 @@ namespace OrderTakerProject.Repository.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("SKUId");
+                    b.HasIndex("SKUId", "PurchaseOrderId")
+                        .IsUnique();
 
                     b.ToTable("PurchaseItems");
                 });

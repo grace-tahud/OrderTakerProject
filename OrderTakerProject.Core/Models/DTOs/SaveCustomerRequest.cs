@@ -13,8 +13,8 @@ namespace OrderTakerProject.Core.Models.DTOs
         public string MobileNumber { get; set; }
         public string City { get; set; }
     }
-    public class SaveCustomerResponse
+    public class SaveCustomerResponse:BaseResponse
     {
-        public string Message { get; set; }
+        public bool Success { get; set; }
     }
 }

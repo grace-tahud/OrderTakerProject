@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OrderTakerProject.Core.Enumerations;
 using OrderTakerProject.Core.Models.DatabaseDTOs;
 using OrderTakerProject.Core.Models.DTOs;
 using OrderTakerProject.Repository.Services.Interface;
@@ -30,48 +31,22 @@ namespace OrderTakerProject.Controllers
             this.mapper = mapper;
         }
 
+        #region Customers
         [Route("SaveCustomer")]
         [HttpPost]
         public SaveCustomerResponse SaveCustomer(SaveCustomerRequest request)
         {
             var response = new SaveCustomerResponse();
-            var model = mapper.Map<SaveCustomerModel>(request);
-            var serviceResponse = customerService.SaveCustomer(model);
-            response.Message = serviceResponse.Message;
-            return response;
-        }
-
-        [Route("GetCustomers")]
-        [HttpPost]
-        public GetCustomersResponse GetCustomers()
-        {
-            var response = new GetCustomersResponse();
-            //var model = mapper.Map<SaveCustomerModel>(request);
-            var serviceResponse = customerService.GetCustomers();
-            var customers = mapper.Map<List<CustomerModel>>(serviceResponse);
-            response.Customers = customers;
-            return response;
-        }
-        [Route("GetCustomerById")]
-        [HttpPost]
-        public GetCustomerResponse GetCustomerById(GetCustomerRequest request)
-        {
-            var response = new GetCustomerResponse();
-            //var model = mapper.Map<SaveCustomerModel>(request);
-            var serviceResponse = customerService.GetCustomerById(request.CustomerId);
-            var customer = mapper.Map<CustomerModel>(serviceResponse);
-            response.Customer = customer;
-            return response;
-        }
-        [Route("GetCustomerByName")]
-        [HttpPost]
-        public GetCustomerResponse GetCustomerByName(GetCustomerRequest request)
-        {
-            var response = new GetCustomerResponse();
-            //var model = mapper.Map<SaveCustomerModel>(request);
-            var serviceResponse = customerService.GetCustomerByFullName(request.Name);
-            var customer = mapper.Map<CustomerModel>(serviceResponse);
-            response.Customer = customer;
+            try
+            {
+                var model = mapper.Map<SaveCustomerModel>(request);
+                response = customerService.SaveCustomer(model);
+            }
+            catch(Exception ex)
+            {
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+           
             return response;
         }
 
@@ -80,20 +55,116 @@ namespace OrderTakerProject.Controllers
         public UpdateCustomerResponse UpdateCustomer(UpdateCustomerRequest request)
         {
             var response = new UpdateCustomerResponse();
-            var model = mapper.Map<UpdateCustomerModel>(request);
-            var serviceResponse = customerService.UpdateCustomer(model);
-            response.Message = serviceResponse.Message;
+            try
+            {
+                var model = mapper.Map<UpdateCustomerModel>(request);
+                response = customerService.UpdateCustomer(model);
+
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+            }
             return response;
         }
+
+        [Route("GetCustomers")]
+        [HttpPost]
+        public GetCustomersResponse GetCustomers()
+        {
+            var response = new GetCustomersResponse();
+            try
+            {
+                response = customerService.GetCustomers();
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+            }
+            return response;
+        }
+
+        [Route("GetCustomerById")]
+        [HttpPost]
+        public GetCustomerResponse GetCustomerById(GetCustomerRequest request)
+        {
+            var response = new GetCustomerResponse();
+            try
+            {
+                response = customerService.GetCustomerById(request.CustomerId);
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+            }
+            return response;
+        }
+
+        [Route("GetCustomerByName")]
+        [HttpPost]
+        public GetCustomerResponse GetCustomerByName(GetCustomerRequest request)
+        {
+            var response = new GetCustomerResponse();
+            try
+            {
+                response = customerService.GetCustomerByFullName(request.Name);
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+            }
+            return response;
+        }
+
+        #endregion
 
         [Route("SaveSKU")]
         [HttpPost]
         public SaveSKUResponse SaveSKU(SaveSKURequest request)
         {
             var response = new SaveSKUResponse();
-            var model = mapper.Map<SaveSKUModel>(request);
-            var serviceResponse = skuService.SaveSKU(model);
-            response.Message = serviceResponse.Message;
+            try
+            {
+                var model = mapper.Map<SaveSKUModel>(request);
+                response = skuService.SaveSKU(model);
+            }
+            catch(Exception ex)
+            {
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+           
+            return response;
+        }
+        [Route("UpdateSKU")]
+        [HttpPost]
+        public UpdateSKUResponse UpdateSKU(UpdateSKURequest request)
+        {
+            var response = new UpdateSKUResponse();
+            try
+            {
+                var model = mapper.Map<UpdateSKUModel>(request);
+                response = skuService.UpdateSKU(model);
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
             return response;
         }
 
@@ -102,9 +173,21 @@ namespace OrderTakerProject.Controllers
         public GetSKUsResponse GetSKUs()
         {
             var response = new GetSKUsResponse();
-            var serviceResponse = skuService.GetSKUs();
-            var SKUs = mapper.Map<List<SKUModel>>(serviceResponse);
-            response.SKUs = SKUs;
+            try
+            {
+                response = skuService.GetSKUs();
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+            }
+            //var serviceResponse = skuService.GetSKUs();
+            //var SKUs = mapper.Map<List<SKUModel>>(serviceResponse);
+            //response.SKUs = SKUs;
             return response;
         }
 
@@ -113,9 +196,22 @@ namespace OrderTakerProject.Controllers
         public GetSKUResponse GetSKUById(GetSKURequest request)
         {
             var response = new GetSKUResponse();
-            var serviceResponse = skuService.GetSKUById(request.SKUId);
-            var sku = mapper.Map<SKUModel>(serviceResponse);
-            response.SKU = sku;
+            try
+            {
+                response = skuService.GetSKUById(request.SKUId);
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+
+            }
+            //var serviceResponse = skuService.GetSKUById(request.SKUId);
+            //var sku = mapper.Map<SKUModel>(serviceResponse);
+            //response.SKU = sku;
             return response;
         }
 
@@ -124,53 +220,42 @@ namespace OrderTakerProject.Controllers
         public GetSKUResponse GetSKUByName(GetSKURequest request)
         {
             var response = new GetSKUResponse();
-            var serviceResponse = skuService.GetSKUByName(request.Name);
-            var sku = mapper.Map<SKUModel>(serviceResponse);
-            response.SKU = sku;
+            try
+            {
+                response = skuService.GetSKUByName(request.Name);
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+            }
+            //var serviceResponse = skuService.GetSKUByName(request.Name);
+            //var sku = mapper.Map<SKUModel>(serviceResponse);
+            //response.SKU = sku;
             return response;
         }
 
-        [Route("UpdateSKU")]
-        [HttpPost]
-        public UpdateSKUResponse UpdateSKU(UpdateSKURequest request)
-        {
-            var response = new UpdateSKUResponse();
-            var model = mapper.Map<UpdateSKUModel>(request);
-            var serviceResponse = skuService.UpdateSKU(model);
-            response.Message = serviceResponse.Message;
-            return response;
-        }
+        
 
         [Route("SavePurchaseOrder")]
         [HttpPost]
         public SavePurchaseOrderResponse SavePurchaseOrder(SavePurchaseOrderRequest request)
         {
             var response = new SavePurchaseOrderResponse();
-            var model = mapper.Map<SavePurchaseOrderModel>(request);
-            var serviceResponse = purchaseOrderService.SavePurchaseOrder(model);
-            response.Message = serviceResponse.Message;
-            return response;
-        }
 
-        [Route("GetPurchaseOrders")]
-        [HttpPost]
-        public GetPurchaseOrdersResponse GetPurchaseOrders()
-        {
-            var response = new GetPurchaseOrdersResponse();
-            var serviceResponse = purchaseOrderService.GetPurchaseOrders();
-            var PurchaseOrders = mapper.Map<List<PurchaseOrderModel>>(serviceResponse);
-            response.PurchaseOrders = PurchaseOrders;
-            return response;
-        }
+            try
+            {
+                var model = mapper.Map<SavePurchaseOrderModel>(request);
+                response = purchaseOrderService.SavePurchaseOrder(model);
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
 
-        [Route("GetPurchaseOrderById")]
-        [HttpPost]
-        public GetPurchaseOrderResponse GetPurchaseOrderById(GetPurchaseOrderRequest request)
-        {
-            var response = new GetPurchaseOrderResponse();
-            var serviceResponse = purchaseOrderService.GetPurchaseOrderById(request.PurchaseOrderId);
-            var PurchaseOrder = mapper.Map<PurchaseOrderModel>(serviceResponse);
-            response.PurchaseOrder = PurchaseOrder;
             return response;
         }
 
@@ -179,58 +264,83 @@ namespace OrderTakerProject.Controllers
         public UpdatePurchaseOrderResponse UpdatePurchaseOrder(UpdatePurchaseOrderRequest request)
         {
             var response = new UpdatePurchaseOrderResponse();
-            var model = mapper.Map<UpdatePurchaseOrderModel>(request);
-            var serviceResponse = purchaseOrderService.UpdatePurchaseOrder(model);
-            response.Message = serviceResponse.Message;
+            try
+            {
+                var model = mapper.Map<UpdatePurchaseOrderModel>(request);
+                response = purchaseOrderService.UpdatePurchaseOrder(model);
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+
             return response;
         }
+        [Route("GetPurchaseOrders")]
+        [HttpPost]
+        public GetPurchaseOrdersResponse GetPurchaseOrders()
+        {
+            var response = new GetPurchaseOrdersResponse();
+
+            try
+            {
+                response = purchaseOrderService.GetPurchaseOrders();
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+            }
+            return response;
+        }
+
+        [Route("GetPurchaseOrderById")]
+        [HttpPost]
+        public GetPurchaseOrderResponse GetPurchaseOrderById(GetPurchaseOrderRequest request)
+        {
+            var response = new GetPurchaseOrderResponse();
+
+            try
+            {
+                response = purchaseOrderService.GetPurchaseOrderById(request.PurchaseOrderId);
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+
+            }
+
+            //var serviceResponse = purchaseOrderService.GetPurchaseOrderById(request.PurchaseOrderId);
+            //var PurchaseOrder = mapper.Map<PurchaseOrderModel>(serviceResponse);
+            //response.PurchaseOrder = PurchaseOrder;
+            return response;
+        }
+
+        
 
         [Route("SavePurchaseItem")]
         [HttpPost]
         public SavePurchaseItemResponse SavePurchaseItem(SavePurchaseItemRequest request)
         {
             var response = new SavePurchaseItemResponse();
-            var model = mapper.Map<SavePurchaseItemModel>(request);
-            var serviceResponse = purchaseItemService.SavePurchaseItem(model);
-            if(serviceResponse.Success)
+
+            try
             {
-                response.Code = 0;
+                var model = mapper.Map<SavePurchaseItemModel>(request);
+                response = purchaseItemService.SavePurchaseItem(model);
             }
-            else { response.Code = 99; }
-            response.Message = serviceResponse.Message;
-            return response;
-        }
-
-        [Route("GetPurchaseItems")]
-        [HttpPost]
-        public GetPurchaseItemsResponse GetPurchaseItems()
-        {
-            var response = new GetPurchaseItemsResponse();
-            var serviceResponse = purchaseItemService.GetPurchaseItems();
-            var PurchaseItems = mapper.Map<List<PurchaseItemModel>>(serviceResponse);
-            response.PurchaseItems = PurchaseItems;
-            return response;
-        }
-        [Route("GetPurchaseItemsByOrder")]
-        [HttpPost]
-        public GetPurchaseItemsResponse GetPurchaseItemsByOrder(GetPurchaseItemsRequest request)
-        {
-            var response = new GetPurchaseItemsResponse();
-            var serviceResponse = purchaseItemService.GetPurchaseItemsByOrder(request.PurchaseOrderId);
-            var PurchaseItems = mapper.Map<List<PurchaseItemModel>>(serviceResponse);
-            response.PurchaseItems = PurchaseItems;
-            response.TotalPurchaseAmount = PurchaseItems.Sum(i=>i.Price);
-            return response;
-        }
-
-        [Route("GetPurchaseItemById")]
-        [HttpPost]
-        public GetPurchaseItemResponse GetPurchaseItemById(GetPurchaseItemRequest request)
-        {
-            var response = new GetPurchaseItemResponse();
-            var serviceResponse = purchaseItemService.GetPurchaseItemById(request.PurchaseItemId);
-            var PurchaseItem = mapper.Map<PurchaseItemModel>(serviceResponse);
-            response.PurchaseItem = PurchaseItem;
+            catch (Exception ex)
+            {
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+           
             return response;
         }
 
@@ -239,10 +349,93 @@ namespace OrderTakerProject.Controllers
         public UpdatePurchaseItemResponse UpdatePurchaseItem(UpdatePurchaseItemRequest request)
         {
             var response = new UpdatePurchaseItemResponse();
-            var model = mapper.Map<UpdatePurchaseItemModel>(request);
-            var serviceResponse = purchaseItemService.UpdatePurchaseItem(model);
-            response.Message = serviceResponse.Message;
+            try
+            {
+                var model = mapper.Map<UpdatePurchaseItemModel>(request);
+                response = purchaseItemService.UpdatePurchaseItem(model);
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
             return response;
         }
+
+        [Route("GetPurchaseItems")]
+        [HttpPost]
+        public GetPurchaseItemsResponse GetPurchaseItems()
+        {
+            var response = new GetPurchaseItemsResponse();
+            try
+            {
+                response = purchaseItemService.GetPurchaseItems();
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+            }
+
+            //var serviceResponse = purchaseItemService.GetPurchaseItems();
+            //var PurchaseItems = mapper.Map<List<PurchaseItemModel>>(serviceResponse);
+            //response.PurchaseItems = PurchaseItems;
+            return response;
+        }
+        [Route("GetPurchaseItemsByOrder")]
+        [HttpPost]
+        public GetPurchaseItemsResponse GetPurchaseItemsByOrder(GetPurchaseItemsRequest request)
+        {
+            var response = new GetPurchaseItemsResponse();
+
+            try
+            {
+                response = purchaseItemService.GetPurchaseItemsByOrder(request.PurchaseOrderId);
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+            }
+
+            //var serviceResponse = purchaseItemService.GetPurchaseItemsByOrder(request.PurchaseOrderId);
+            //var PurchaseItems = mapper.Map<List<PurchaseItemModel>>(serviceResponse);
+            //response.PurchaseItems = PurchaseItems;
+            //response.TotalPurchaseAmount = PurchaseItems.Sum(i=>i.Price);
+            return response;
+        }
+
+        [Route("GetPurchaseItemById")]
+        [HttpPost]
+        public GetPurchaseItemResponse GetPurchaseItemById(GetPurchaseItemRequest request)
+        {
+            var response = new GetPurchaseItemResponse();
+
+            try
+            {
+                response = purchaseItemService.GetPurchaseItemById(request.PurchaseItemId);
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+
+            }
+
+            //var serviceResponse = purchaseItemService.GetPurchaseItemById(request.PurchaseItemId);
+            //var PurchaseItem = mapper.Map<PurchaseItemModel>(serviceResponse);
+            //response.PurchaseItem = PurchaseItem;
+            return response;
+        }
+
+       
     }
 }

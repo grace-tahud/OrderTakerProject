@@ -118,9 +118,10 @@ namespace OrderTakerProject.Repository.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_PurchaseItems_SKUId",
+                name: "IX_PurchaseItems_SKUId_PurchaseOrderId",
                 table: "PurchaseItems",
-                column: "SKUId");
+                columns: new[] { "SKUId", "PurchaseOrderId" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_PurchaseOrders_CustomerId",

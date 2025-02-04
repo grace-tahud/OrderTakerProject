@@ -15,8 +15,8 @@ namespace OrderTakerProject.Core.Models.DTOs
         public byte[]? SKUImage { get; set; }
         public bool IsActive { get; set; }
     }
-    public class UpdateSKUResponse
+    public class UpdateSKUResponse:BaseResponse
     {
-        public string Message { get; set; }
+        public bool Success { get; set; }
     }
 }

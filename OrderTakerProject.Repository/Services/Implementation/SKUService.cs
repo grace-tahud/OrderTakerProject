@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using OrderTakerProject.Core.Enumerations;
 using OrderTakerProject.Core.Models.DatabaseDTOs;
+using OrderTakerProject.Core.Models.DTOs;
 using OrderTakerProject.Repository.Models.Entity;
 using OrderTakerProject.Repository.Services.Interface;
 using System;
@@ -14,9 +17,12 @@ namespace OrderTakerProject.Repository.Services.Implementation
     {
 
         private readonly ApplicationDbContext _context;
-        public SKUService(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public SKUService(ApplicationDbContext context,
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
         #region IDisposable implememtation
         private bool _disposed;
@@ -47,60 +53,116 @@ namespace OrderTakerProject.Repository.Services.Implementation
 
         #endregion
 
-        public GetSKUModel GetSKUById(int id)
+        public GetSKUResponse GetSKUById(int id)
         {
-            var response = new GetSKUModel();
-            response = _context.SKUs.Where(s => s.Id == id).
-                Select(s => new GetSKUModel
+            var response = new GetSKUResponse();
+            try
+            {
+                var dbResponse = _context.SKUs.Where(s => s.Id == id).FirstOrDefault();
+                if (dbResponse != null)
                 {
-                    Id = s.Id,
-                    Name = s.Name,
-                    Code = s.Code,
-                    UnitPrice = s.UnitPrice,
-                    IsActive = s.IsActive,
-                    SKUImage = s.SKUImage
+                    var skuModel = _mapper.Map<SKUModel>(dbResponse);
+                    response.SKU = skuModel;
+                    response.Success = true;
+                    response.Result = new Result(BaseResponseCodes.Success);
+                }
 
-                }).FirstOrDefault();
-            ;
+            }
+            catch(Exception ex)
+            {
+                response.Success = false;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+            //response = _context.SKUs.Where(s => s.Id == id).
+            //    Select(s => new GetSKUModel
+            //    {
+            //        Id = s.Id,
+            //        Name = s.Name,
+            //        Code = s.Code,
+            //        UnitPrice = s.UnitPrice,
+            //        IsActive = s.IsActive,
+            //        SKUImage = s.SKUImage
+
+            //    }).FirstOrDefault();
+            //;
             return response;
         }
-        public GetSKUModel GetSKUByName(string name)
+        public GetSKUResponse GetSKUByName(string name)
         {
-            var response = new GetSKUModel();
-            response = _context.SKUs.Where(s => s.Name.Contains(name)).
-                Select(s => new GetSKUModel
+            var response = new GetSKUResponse();
+            try
+            {
+                var dbResponse = _context.SKUs.Where(s => s.Name.Contains(name)).FirstOrDefault();
+                if (dbResponse != null)
                 {
-                    Id = s.Id,
-                    Name = s.Name,
-                    Code = s.Code,
-                    UnitPrice = s.UnitPrice,
-                    //IsActive = s.IsActive,
-                    //SKUImage = s.SKUImage
+                    var skuModel = _mapper.Map<SKUModel>(dbResponse);
+                    response.SKU = skuModel;
+                    response.Success = true;
+                    response.Result = new Result(BaseResponseCodes.Success);
+                }
+            }
+            catch(Exception ex)
+            {
+                response.Success = false;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+            //response = _context.SKUs.Where(s => s.Name.Contains(name)).
+            //    Select(s => new GetSKUModel
+            //    {
+            //        Id = s.Id,
+            //        Name = s.Name,
+            //        Code = s.Code,
+            //        UnitPrice = s.UnitPrice,
+            //        //IsActive = s.IsActive,
+            //        //SKUImage = s.SKUImage
 
-                }).FirstOrDefault();
-            ;
+            //    }).FirstOrDefault();
+            //;
             return response;
         }
-        public List<GetSKUModel> GetSKUs()
+        public GetSKUsResponse GetSKUs()
         {
-            var response = new List<GetSKUModel>();
-            response = _context.SKUs.
-                Select(s => new GetSKUModel
+            var response = new GetSKUsResponse();
+            try
+            {
+                var dbResponse = _context.SKUs.ToList();
+                if (dbResponse != null)
                 {
-                    Id = s.Id,
-                    Name = s.Name,
-                    Code = s.Code,
-                    UnitPrice = s.UnitPrice,
-                    IsActive = s.IsActive,
-                    SKUImage = s.SKUImage
-                }).ToList();
+                    var skusModel = _mapper.Map<List<SKUModel>>(dbResponse);
+                    response.SKUs = skusModel;
+                    response.Success = true;
+                    if (dbResponse.Any())
+                    {
+                        response.Result = new Result(BaseResponseCodes.Success);
+                    }
+                    else
+                    {
+                        response.Result = new Result(BaseResponseCodes.NoItems);
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                response.Success = false;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+            //response = _context.SKUs.
+            //    Select(s => new GetSKUModel
+            //    {
+            //        Id = s.Id,
+            //        Name = s.Name,
+            //        Code = s.Code,
+            //        UnitPrice = s.UnitPrice,
+            //        IsActive = s.IsActive,
+            //        SKUImage = s.SKUImage
+            //    }).ToList();
 
             return response;
         }
 
-        public DbResult SaveSKU(SaveSKUModel model)
+        public SaveSKUResponse SaveSKU(SaveSKUModel model)
         {
-            var response = new DbResult();
+            var response = new SaveSKUResponse();
             try
             {
                 var dbResponse = _context.SKUs.Add(new SKU
@@ -113,39 +175,39 @@ namespace OrderTakerProject.Repository.Services.Implementation
                 });
                 _context.SaveChanges();
                 response.Success = true;
-                response.Message = "Success";
+                response.Result = new Result(BaseResponseCodes.Success);
             }
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
             }
 
             return response;
         }
 
-        public DbResult UpdateSKU(UpdateSKUModel model)
+        public UpdateSKUResponse UpdateSKU(UpdateSKUModel model)
         {
-            var response = new DbResult();
+            var response = new UpdateSKUResponse();
             try
             {
-                var customer = _context.SKUs.Where(c => c.Id == model.Id).FirstOrDefault();
-                if (customer != null)
+                var sku = _context.SKUs.Where(c => c.Id == model.Id).FirstOrDefault();
+                if (sku != null)
                 {
-                    customer.Name = model.Name;
-                    customer.Code = model.Code;
-                    customer.UnitPrice = model.UnitPrice;
-                    customer.SKUImage = model.SKUImage;
-                    customer.IsActive = model.IsActive;
+                    sku.Name = model.Name;
+                    sku.Code = model.Code;
+                    sku.UnitPrice = model.UnitPrice;
+                    sku.SKUImage = model.SKUImage;
+                    sku.IsActive = model.IsActive;
                     _context.SaveChanges();
                 }
                 response.Success = true;
-                response.Message = "Success";
+                response.Result = new Result(BaseResponseCodes.Success);
             }
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
             }
 
             return response;

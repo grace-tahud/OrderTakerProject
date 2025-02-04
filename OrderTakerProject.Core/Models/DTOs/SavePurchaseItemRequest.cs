@@ -13,9 +13,8 @@ namespace OrderTakerProject.Core.Models.DTOs
         public int Quantity { get; set; }
         public decimal Price { get; set; }
     }
-    public class SavePurchaseItemResponse
+    public class SavePurchaseItemResponse:BaseResponse
     {
-        public string Message { get; set; }
-        public int Code { get; set; }
+        public bool Success { get; set; }
     }
 }

@@ -10,7 +10,7 @@ namespace OrderTakerProject.Core.Models.DTOs
     {
         public int PurchaseOrderId { get; set; }
     }
-    public class GetPurchaseItemsResponse
+    public class GetPurchaseItemsResponse:BaseResponse
     {
         public List<PurchaseItemModel> PurchaseItems { get; set; }
         public decimal TotalPurchaseAmount { get; set; }

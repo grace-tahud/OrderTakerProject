@@ -9,23 +9,23 @@ namespace OrderTakerProject.Mapping
         public DTOMapping()
         {
             //Customers
-            CreateMap<GetCustomerModel, CustomerModel>();
+            //CreateMap<GetCustomerModel, CustomerModel>();
             CreateMap<SaveCustomerRequest, SaveCustomerModel>();
             CreateMap<UpdateCustomerRequest, UpdateCustomerModel>();
 
             //SKUs
             CreateMap<SaveSKURequest, SaveSKUModel>();
-            CreateMap<GetSKUModel, SKUModel>();
+           // CreateMap<GetSKUModel, SKUModel>();
             CreateMap<UpdateSKURequest, UpdateSKUModel>();
 
             //PurchaseOrders
             CreateMap<SavePurchaseOrderRequest, SavePurchaseOrderModel>();
-            CreateMap<GetPurchaseOrderModel, PurchaseOrderModel>();
+            //CreateMap<GetPurchaseOrderModel, PurchaseOrderModel>();
             CreateMap<UpdatePurchaseOrderRequest, UpdatePurchaseOrderModel>();
 
             //PurchaseItems
             CreateMap<SavePurchaseItemRequest, SavePurchaseItemModel>();
-            CreateMap<GetPurchaseItemModel, PurchaseItemModel>();
+            //CreateMap<GetPurchaseItemModel, PurchaseItemModel>();
             CreateMap<UpdatePurchaseItemRequest, UpdatePurchaseItemModel>();
         }
     }

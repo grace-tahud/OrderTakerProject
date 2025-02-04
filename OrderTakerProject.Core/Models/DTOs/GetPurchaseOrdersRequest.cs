@@ -9,7 +9,7 @@ namespace OrderTakerProject.Core.Models.DTOs
     public class GetPurchaseOrdersRequest
     {
     }
-    public class GetPurchaseOrdersResponse
+    public class GetPurchaseOrdersResponse:BaseResponse
     {
         public List<PurchaseOrderModel> PurchaseOrders { get; set; }
     }

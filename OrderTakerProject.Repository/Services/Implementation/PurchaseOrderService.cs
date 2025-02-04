@@ -1,5 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
+using OrderTakerProject.Core.Enumerations;
 using OrderTakerProject.Core.Models.DatabaseDTOs;
+using OrderTakerProject.Core.Models.DTOs;
 using OrderTakerProject.Repository.Models.Entity;
 using OrderTakerProject.Repository.Services.Interface;
 using System;
@@ -43,13 +46,16 @@ namespace OrderTakerProject.Repository.Services.Implementation
         #endregion
 
         private readonly ApplicationDbContext _context;
-        public PurchaseOrderService(ApplicationDbContext context)
+        private readonly IMapper _mapper;
+        public PurchaseOrderService(ApplicationDbContext context,
+            IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
-        public DbResult SavePurchaseOrder(SavePurchaseOrderModel model)
+        public SavePurchaseOrderResponse SavePurchaseOrder(SavePurchaseOrderModel model)
         {
-            var response = new DbResult();
+            var response = new SavePurchaseOrderResponse();
             try
             {
                 var dbResponse = _context.PurchaseOrders.Add(new PurchaseOrder
@@ -62,20 +68,20 @@ namespace OrderTakerProject.Repository.Services.Implementation
                 });
                 _context.SaveChanges();
                 response.Success = true;
-                response.Message = "Success";
+                response.Result = new Result(BaseResponseCodes.Success);
             }
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
             }
 
             return response;
         }
 
-        public DbResult UpdatePurchaseOrder(UpdatePurchaseOrderModel model)
+        public UpdatePurchaseOrderResponse UpdatePurchaseOrder(UpdatePurchaseOrderModel model)
         {
-            var response = new DbResult();
+            var response = new UpdatePurchaseOrderResponse();
             try
             {
                 var customer = _context.PurchaseOrders.Where(c => c.Id == model.Id).FirstOrDefault();
@@ -89,50 +95,90 @@ namespace OrderTakerProject.Repository.Services.Implementation
                     _context.SaveChanges();
                 }
                 response.Success = true;
-                response.Message = "Success";
+                response.Result = new Result(BaseResponseCodes.Success);
             }
             catch (Exception ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
             }
 
             return response;
         }
 
-        public GetPurchaseOrderModel GetPurchaseOrderById(int id)
+        public GetPurchaseOrderResponse GetPurchaseOrderById(int id)
         {
-            var response = new GetPurchaseOrderModel();
-            response = _context.PurchaseOrders.Where(o => o.Id == id).Include(o=>o.Customer).
-                Select(o => new GetPurchaseOrderModel
+            var response = new GetPurchaseOrderResponse();
+            try
+            {
+                var dbResponse = _context.PurchaseOrders.Where(o => o.Id == id).Include(o => o.Customer).FirstOrDefault();
+                if (dbResponse != null)
                 {
-                    Id = o.Id,
-                    CustomerId = o.CustomerId,
-                    CustomerName = o.Customer.FullName,
-                    DateOfDelivery = o.DateOfDelivery,
-                    Status = o.Status,
-                    AmountDue = o.AmountDue,
-                    IsActive = o.IsActive
+                    var purchaseOrderModel = _mapper.Map<PurchaseOrderModel>(dbResponse);
+                    response.PurchaseOrder = purchaseOrderModel;
+                    response.Success = true;
+                    response.Result = new Result(BaseResponseCodes.Success);
+                }
+            }
+            catch (Exception ex) 
+            {
+                response.Success = false;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+            //response = _context.PurchaseOrders.Where(o => o.Id == id).Include(o=>o.Customer).
+            //    Select(o => new GetPurchaseOrderModel
+            //    {
+            //        Id = o.Id,
+            //        CustomerId = o.CustomerId,
+            //        CustomerName = o.Customer.FullName,
+            //        DateOfDelivery = o.DateOfDelivery,
+            //        Status = o.Status,
+            //        AmountDue = o.AmountDue,
+            //        IsActive = o.IsActive
 
-                }).FirstOrDefault();
-            ;
+            //    }).FirstOrDefault();
+            //;
             return response;
         }
 
-        public List<GetPurchaseOrderModel> GetPurchaseOrders()
+        public GetPurchaseOrdersResponse GetPurchaseOrders()
         {
-            var response = new List<GetPurchaseOrderModel>();
-            response = _context.PurchaseOrders.Include(o=>o.Customer).
-                Select(o => new GetPurchaseOrderModel
+            var response = new GetPurchaseOrdersResponse();
+            try
+            {
+                var dbResponse = _context.PurchaseOrders.Include(o => o.Customer).ToList();
+                if (dbResponse != null)
                 {
-                    Id = o.Id,
-                    CustomerName = o.Customer.FullName,
-                    CustomerId = o.CustomerId,
-                    DateOfDelivery = o.DateOfDelivery,
-                    Status = o.Status,
-                    AmountDue = o.AmountDue,
-                    IsActive = o.IsActive
-                }).ToList();
+                    var purchaseOrdersModel = _mapper.Map<List<PurchaseOrderModel>>(dbResponse);
+                    response.PurchaseOrders = purchaseOrdersModel;
+                    response.Success = true;
+                    if (dbResponse.Any())
+                    {
+                        response.Result = new Result(BaseResponseCodes.Success);
+                    }
+                    else
+                    {
+                        response.Result = new Result(BaseResponseCodes.NoItems);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+           
+            //response = _context.PurchaseOrders.Include(o=>o.Customer).
+            //    Select(o => new GetPurchaseOrderModel
+            //    {
+            //        Id = o.Id,
+            //        CustomerName = o.Customer.FullName,
+            //        CustomerId = o.CustomerId,
+            //        DateOfDelivery = o.DateOfDelivery,
+            //        Status = o.Status,
+            //        AmountDue = o.AmountDue,
+            //        IsActive = o.IsActive
+            //    }).ToList();
 
             return response;
         }

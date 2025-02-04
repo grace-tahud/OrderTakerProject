@@ -11,7 +11,7 @@ namespace OrderTakerProject.Core.Models.DTOs
         public int SKUId { get; set; }
         public string Name { get; set; }
     }
-    public class GetSKUResponse
+    public class GetSKUResponse:BaseResponse
     {
         public SKUModel SKU { get; set; }
     }

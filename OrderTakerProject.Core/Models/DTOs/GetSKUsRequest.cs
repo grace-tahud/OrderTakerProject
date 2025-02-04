@@ -9,7 +9,7 @@ namespace OrderTakerProject.Core.Models.DTOs
     public class GetSKUsRequest
     {
     }
-    public class GetSKUsResponse
+    public class GetSKUsResponse:BaseResponse
     {
         public List<SKUModel> SKUs { get; set; }
     }
