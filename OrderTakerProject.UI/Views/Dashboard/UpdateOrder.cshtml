@@ -23,7 +23,7 @@
                 <input class="form-control" id="UpdateDeliveryDate" />
                 <br />
                 <select class="form-select" aria-label="Default select example" id="UpdateOrderStatus">
-                    <option value="@Model.PurchaseOrder.Status">Select Status</option>
+                    <option value="@Model.PurchaseOrder.Status">@Model.PurchaseOrder.Status</option>
                     <option value="New">New</option>
                     <option value="Completed">Completed</option>
                     <option value="Cancelled">Cancelled</option>
@@ -33,13 +33,22 @@
                 <label class="form-label">Amount Due </label>
                 <input class="form-control" value="@Model.PurchaseOrder.AmountDue" id="UpdateOrderAmount" />
                 <br />
-
-                <label  class="form-label"> Is Active? </label>
-
-                <input class="form-check-input" type="checkbox" id="UpdateOrderIsActive" />
+                <div class="row">
+                    <div class="col-md-4">
+                        <label class="form-label"> Is Active? </label>
+                        @{
+                            if(Model.PurchaseOrder.IsActive){
+                                <input checked class="form-check-input" type="checkbox" id="UpdateOrderIsActive" />
+                            }else{
+                                <input class="form-check-input" type="checkbox" id="UpdateOrderIsActive" />
+                            }
+                        }
+                        
+                    </div>
+                    
+                </div>
                 
-
-                <button type="button" class="btn btn-primary" onclick="return UpdateOrder();">Save</button>
+               
 
             </div>
 
@@ -49,43 +58,48 @@
 
     <div class="container-fluid">
         <div class="row">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPurchaseItemModal" id="addPurchaseItem">
+                Add Item
+            </button>
             <div class="col-6 align-self-center">
+                @{
+                    if (Model.PurchaseItems != null && Model.PurchaseItems.Any())
+                    {
+
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">SKU</th>
+                                    <th scope="col">Quantity</th>
+                                    <th scope="col">Price</th>
+                                    <th scope="col"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model.PurchaseItems)
+                                {
+                                    <tr>
+                                        <th scope="row">@item.SKU</th>
+                                        <td>@item.Quantity</td>
+                                        <td>@item.Price</td>
+                                        <th scope="col">
+                                            <button onclick="openUpdatePurchaseItemModal(@item.Id)"
+                                                    class="btn btn-primary">
+                                                Update
+                                            </button>
+
+                                        </th>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    }
+                }
+                <button type="button" class="btn btn-primary" onclick="return UpdateOrder();">Save Order</button>
             </div>
 
-            @{
-                if (Model.PurchaseItems != null && Model.PurchaseItems.Any())
-                {
-
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th scope="col">SKU</th>
-                                <th scope="col">Quantity</th>
-                                <th scope="col">Price</th>
-                                <th scope="col"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var item in Model.PurchaseItems)
-                            {
-                                <tr>
-                                    <th scope="row">@item.SKU</th>
-                                    <td>@item.Quantity</td>
-                                    <td>@item.Price</td>
-                                    <th scope="col">
-                                        <button onclick="openUpdatePurchaseItemModal(@item.Id)"
-                                                class="btn btn-primary">
-                                            Update
-                                        </button>
-
-                                    </th>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-
-                }
-            }
+           
         </div>
 
 

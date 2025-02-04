@@ -192,6 +192,11 @@ namespace OrderTakerProject.Controllers
             var response = new SavePurchaseItemResponse();
             var model = mapper.Map<SavePurchaseItemModel>(request);
             var serviceResponse = purchaseItemService.SavePurchaseItem(model);
+            if(serviceResponse.Success)
+            {
+                response.Code = 0;
+            }
+            else { response.Code = 99; }
             response.Message = serviceResponse.Message;
             return response;
         }

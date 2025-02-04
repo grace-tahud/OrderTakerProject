@@ -34,21 +34,32 @@
                 <input class="form-control" id="Order_AmountDue" value="0" />
                 <br />
 
-                <button type="button" id="initialSaveButton" class="btn btn-primary" onclick="return AddOrder();">Save Initial Order</button>
-
-                <div id="messageLayout" style="display:none">
-                    <p class="text-success">You have saved your order. You can now add items.</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <button type="button" id="initialSaveButton" class="btn btn-primary" onclick="return AddOrder();">Save Initial Order</button>
+                        <div id="messageLayout" style="display:none">
+                            <p class="text-success">You have saved your order. You can now add items.</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <button disabled type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPurchaseItemModal" id="addPurchaseItem">
+                            Add Item
+                        </button>
+                    </div>
+                    
                 </div>
 
-                <button disabled type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPurchaseItemModal" id="addPurchaseItem">
-                    Add Item
-                </button>
+               
+
+               
+
+               
 
                 <div id="itemsLayout">
                 </div>
 
-
-                <button type="button" class="btn btn-primary" onclick="return UpdateOrderAmountDue();">Save Order</button>
+                
+                
 
 
 

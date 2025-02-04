@@ -37,14 +37,9 @@ function AddCustomer() {
         type: "POST",
         contentType: 'application/json; charset=UTF-8',
         dataType: "json",
-        //beforeSend: function (xhr) {   //Include the bearer token in header
-        //    xhr.setRequestHeader("Authorization", 'Bearer ' + result);
-
-        //},
+        
         success: function (result) {
             $('#addCustomerModal').modal('hide');
-            //toastr.success("Added Clinic", 'Successfully Added', { timeOut: 2000, showMethod: "slideDown", hideMethod: "slideUp" });
-
             $('#FirstName').val('');
             $('#LastName').val('');
             $('#MobileNumber').val('');
@@ -61,7 +56,6 @@ function AddCustomer() {
         },
         error: function (errormessage) {
             console.log(errormessage);
-            //toastr.error(errormessage.responseText, 'Error', { timeOut: 2000, showMethod: "slideDown", hideMethod: "slideUp" });
         }
     });
 
@@ -69,9 +63,9 @@ function AddCustomer() {
 
 function openUpdateCustomerModal(customerId) {
     var request = {
-        CustomerId: customerId
+        CustomerId: customerId,
+        Name:''
     };
-    //console.log(request);
     $.ajax({
         url: 'https://localhost:7043/api/order/taker/GetCustomerById',
         type: 'POST',
@@ -79,13 +73,11 @@ function openUpdateCustomerModal(customerId) {
         dataType: "json",
         data: JSON.stringify(request),
         success: function (customer) {
-            //console.log(customer);
             $('#customerId').val(customerId);
             $('#Update_LastName').val(customer.customer.lastName);
             $('#Update_FirstName').val(customer.customer.firstName);
             $('#Update_MobileNumber').val(customer.customer.mobileNumber);
             $('#Update_City').val(customer.customer.city);
-           // $('#Update_CustomerIsActive').val(customer.customer.isActive);
             $("#Update_CustomerIsActive").prop("checked", customer.customer.isActive);
             $('#updateCustomerModal').modal('show');
         },
@@ -111,14 +103,8 @@ function UpdateCustomer() {
         type: "POST",
         contentType: 'application/json; charset=UTF-8',
         dataType: "json",
-        //beforeSend: function (xhr) {   //Include the bearer token in header
-        //    xhr.setRequestHeader("Authorization", 'Bearer ' + result);
-
-        //},
         success: function (result) {
             $('#updateCustomerModal').modal('hide');
-            //toastr.success("Added Clinic", 'Successfully Added', { timeOut: 2000, showMethod: "slideDown", hideMethod: "slideUp" });
-
             $.ajax({
 
                 url: "https://localhost:7109/Dashboard/CustomerList",
@@ -130,7 +116,6 @@ function UpdateCustomer() {
         },
         error: function (errormessage) {
             console.log(errormessage);
-            //toastr.error(errormessage.responseText, 'Error', { timeOut: 2000, showMethod: "slideDown", hideMethod: "slideUp" });
         }
     });
 
@@ -144,7 +129,6 @@ function AddSKU() {
         UnitPrice: $('#SKUUnitPrice').val(),
         SKUImage: $('#SKUImage').val()
     };
-    console.log(request);
     $.ajax({
         url: "https://localhost:7043/api/order/taker/SaveSKU",
         data: JSON.stringify(request),
@@ -154,7 +138,6 @@ function AddSKU() {
        
         success: function (result) {
             $('#addSkuModal').modal('hide');
-
             $('#SKUName').val('');
             $('#SKUCode').val('');
             $('#SKUUnitPrice').val('');
@@ -169,7 +152,6 @@ function AddSKU() {
 
         },
         error: function (errormessage) {
-
             console.log(errormessage);
         }
     });
@@ -177,32 +159,37 @@ function AddSKU() {
 
 }
 
-
 function openUpdateSKUModal(skuId) {
-    var request = {
-        SKUId: skuId,
-        Name:''
-    };
-    //console.log(request);
-    $.ajax({
-        url: 'https://localhost:7043/api/order/taker/GetSKUById',
-        type: 'POST',
-        contentType: 'application/json; charset=UTF-8',
-        dataType: "json",
-        data: JSON.stringify(request),
-        success: function (sku) {
-            //console.log(sku);
-            $('#skuId').val(skuId);
-            $('#Update_Name').val(sku.sku.name);
-            $('#Update_Code').val(sku.sku.code);
-            $('#Update_UnitPrice').val(sku.sku.unitPrice);
-            $("#Update_SKUIsActive").prop("checked", sku.sku.isActive);
-            $('#updateSkuModal').modal('show');
-        },
-        error: function (errormessage) {
-            console.log(errormessage);
-        }
-    });
+    try {
+        var request = {
+            SKUId: skuId,
+            Name: ''
+        };
+        $.ajax({
+            url: 'https://localhost:7043/api/order/taker/GetSKUById',
+            type: 'POST',
+            contentType: 'application/json; charset=UTF-8',
+            dataType: "json",
+            data: JSON.stringify(request),
+            success: function (sku) {
+                console.log(sku);
+                var imageSrc = 'data:image/png;base64,' + sku.sku.skuImage;
+                $('#skuId').val(skuId);
+                $('#Update_Name').val(sku.sku.name);
+                $('#Update_Code').val(sku.sku.code);
+                $('#Update_UnitPrice').val(sku.sku.unitPrice);
+                $("#Update_SKUIsActive").prop("checked", sku.sku.isActive);
+                $("#Update_ProductImage").attr('src', imageSrc);
+                $('#updateSkuModal').modal('show');
+            },
+            error: function (errormessage) {
+                console.log(errormessage);
+            }
+        });
+    } catch (err) {
+        console.log(err);
+    }
+    
 }
 
 
@@ -271,6 +258,7 @@ function AddOrder() {
 
         success: function (result) {
             $('#addPurchaseItem').removeAttr("disabled")
+           
             $("#messageLayout").toggle();
            
         },
@@ -351,9 +339,18 @@ function UpdateOrderAmountDue() {
 }
 
 
-
+$(document).ready(function () {
+    $("#initialSaveButton").on('click', function () {
+        $(this).hide();
+    });
+});
 
 function AddItem() {
+    var purchaseOrderId = $('#Order_NewId').val();
+    if (purchaseOrderId == '') {
+        purchaseOrderId = $('#UpdateOrderId').val()
+    }
+        
     var itemRequest = {
         PurchaseOrderId: $('#Order_NewId').val(),
         SKUId: $('#PurchaseItem_SKUId').val(),
@@ -370,8 +367,11 @@ function AddItem() {
         dataType: "json",
 
         success: function (result) {
-            var purchaseOrderId = $('#Order_NewId').val();
-            console.log(purchaseOrderId);
+            //var purchaseOrderId = $('#Order_NewId').val();
+            console.log(result);
+            if (result.code == 99) {
+                alert('You already selected that item.');
+            }
             $.ajax({
 
                 url: "https://localhost:7109/Dashboard/PurchaseItemList",
@@ -382,7 +382,7 @@ function AddItem() {
                 },
                 success: function (data) {
                     $('#itemsLayout').html(data);
-
+                    $('#saveOrder').removeAttr("disabled")
 
 
                     var purchaseItemRequest = {
@@ -399,8 +399,9 @@ function AddItem() {
                         success: function (result) {
                             console.log(result.totalPurchaseAmount);
                             $('#Order_AmountDue').val(result.totalPurchaseAmount);
-                            $('#initialSaveButton').hide();
-
+                            $('#UpdateOrderAmount').val(result.totalPurchaseAmount);
+                            
+                            $(this).hide();
                         },
                         error: function (errormessage) {
 
@@ -489,7 +490,7 @@ function UpdateItem() {
                 },
                 success: function (data) {
                     $('#itemsLayout').html(data);
-
+                    
 
 
                     var purchaseItemRequest = {
@@ -506,8 +507,9 @@ function UpdateItem() {
                         success: function (result) {
                             console.log(result.totalPurchaseAmount);
                             $('#UpdateOrderAmount').val(result.totalPurchaseAmount);
-                            $('#initialSaveButton').hide();
-
+                            /* $('#initialSaveButton').hide();*/
+                            $('#Order_AmountDue').val(result.totalPurchaseAmount);
+                            $('#saveOrder').removeAttr("disabled")
                         },
                         error: function (errormessage) {
 

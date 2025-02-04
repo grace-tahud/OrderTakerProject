@@ -43,6 +43,11 @@ namespace OrderTakerProject.Repository
             builder.Entity<PurchaseOrder>().Property(p => p.AmountDue).HasColumnType("decimal(18,2)");
 
             builder.Entity<PurchaseItem>().Property(p => p.Price).HasColumnType("decimal(18,2)");
+
+            builder.Entity<PurchaseItem>(entity => {
+                entity.HasIndex(e => new { e.SKUId, e.PurchaseOrderId }).IsUnique();
+            });
+        
         }
     }
 }

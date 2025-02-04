@@ -24,7 +24,8 @@
                     <input asp-for="SKU.UnitPrice" class="form-control" id="Update_UnitPrice" />
                     <span asp-validation-for="SKU.UnitPrice" class="text-danger"></span>
                     <br />
-                    <label asp-for="SKU.SKUImage" class="form-label">Select Image <small class="text-danger">*</small></label>
+
+                    <img id="Update_ProductImage" />
                     <input asp-for="SKU.SKUImage" class="form-control" type="file" id="Update_ImageSelector" />
                     <span asp-validation-for="SKU.SKUImage" class="text-danger"></span>
 

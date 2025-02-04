@@ -16,5 +16,6 @@ namespace OrderTakerProject.Core.Models.DTOs
     public class SavePurchaseItemResponse
     {
         public string Message { get; set; }
+        public int Code { get; set; }
     }
 }
