@@ -172,7 +172,7 @@ function openUpdateSKUModal(skuId) {
             dataType: "json",
             data: JSON.stringify(request),
             success: function (sku) {
-                console.log(sku);
+                //console.log(sku);
                 var imageSrc = 'data:image/png;base64,' + sku.sku.skuImage;
                 $('#skuId').val(skuId);
                 $('#Update_Name').val(sku.sku.name);
@@ -285,7 +285,7 @@ function UpdateOrder() {
         IsActive: $('#UpdateOrderIsActive').prop('checked')
     };
 
-    console.log(orderRequest);
+    //console.log(orderRequest);
     $.ajax({
         url: "https://localhost:7043/api/order/taker/UpdatePurchaseOrder",
         data: JSON.stringify(orderRequest),
@@ -317,7 +317,7 @@ function UpdateOrderAmountDue() {
         IsActive:true
     };
 
-    console.log(orderRequest);
+    //console.log(orderRequest);
     $.ajax({
         url: "https://localhost:7043/api/order/taker/UpdatePurchaseOrder",
         data: JSON.stringify(orderRequest),
@@ -368,7 +368,7 @@ function AddItem() {
 
         success: function (result) {
             //var purchaseOrderId = $('#Order_NewId').val();
-            console.log(result);
+            //console.log(result);
             if (result.code == 99) {
                 alert('You already selected that item.');
             }
@@ -388,7 +388,7 @@ function AddItem() {
                     var purchaseItemRequest = {
                         PurchaseOrderId: purchaseOrderId
                     };
-                    console.log(purchaseItemRequest);
+                    //console.log(purchaseItemRequest);
                     $.ajax({
                         url: "https://localhost:7043/api/order/taker/GetPurchaseItemsByOrder",
                         data: JSON.stringify(purchaseItemRequest),
@@ -397,7 +397,7 @@ function AddItem() {
                         dataType: "json",
 
                         success: function (result) {
-                            console.log(result.totalPurchaseAmount);
+                            //console.log(result.totalPurchaseAmount);
                             $('#Order_AmountDue').val(result.totalPurchaseAmount);
                             $('#UpdateOrderAmount').val(result.totalPurchaseAmount);
                             
@@ -434,7 +434,7 @@ function openUpdatePurchaseItemModal(purchaseItemId) {
     var request = {
         PurchaseItemId: purchaseItemId
     };
-    console.log(request);
+    //console.log(request);
     $.ajax({
         url: 'https://localhost:7043/api/order/taker/GetPurchaseItemById',
         type: 'POST',
@@ -442,7 +442,7 @@ function openUpdatePurchaseItemModal(purchaseItemId) {
         dataType: "json",
         data: JSON.stringify(request),
         success: function (item) {
-            console.log(item);
+            //console.log(item);
             $('#updatePurchaseItemModal').modal('show');
             $('#purchaseItemId').val(purchaseItemId);
             
@@ -479,7 +479,7 @@ function UpdateItem() {
 
         success: function (result) {
             var purchaseOrderId = $('#purchaseItemId').val();
-            console.log(purchaseOrderId);
+            //console.log(purchaseOrderId);
             $.ajax({
 
                 url: "https://localhost:7109/Dashboard/PurchaseItemList",
@@ -496,7 +496,7 @@ function UpdateItem() {
                     var purchaseItemRequest = {
                         PurchaseOrderId: purchaseOrderId
                     };
-                    console.log(purchaseItemRequest);
+                    //console.log(purchaseItemRequest);
                     $.ajax({
                         url: "https://localhost:7043/api/order/taker/GetPurchaseItemsByOrder",
                         data: JSON.stringify(purchaseItemRequest),
@@ -505,7 +505,7 @@ function UpdateItem() {
                         dataType: "json",
 
                         success: function (result) {
-                            console.log(result.totalPurchaseAmount);
+                            //console.log(result.totalPurchaseAmount);
                             $('#UpdateOrderAmount').val(result.totalPurchaseAmount);
                             /* $('#initialSaveButton').hide();*/
                             $('#Order_AmountDue').val(result.totalPurchaseAmount);
@@ -542,7 +542,7 @@ $("#UpdatePurchaseItemQuantity").on("input", function () {
     var initialPrice = $("#UpdateUnitPrice").val();
     if ($("#UpdatePurchaseItemQuantity").val() > 1) {
         this.value = this.value.replace(/[^0-9\.]/g, '');
-        console.log(initialPrice);
+        //console.log(initialPrice);
         var quantity = this.value;
         $("#UpdatePurchaseItemPrice").val(quantity * initialPrice);
     } else {
