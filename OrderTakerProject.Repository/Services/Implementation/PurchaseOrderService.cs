@@ -183,5 +183,27 @@ namespace OrderTakerProject.Repository.Services.Implementation
             return response;
         }
 
+        public GetPurchaseOrderResponse GetLatestOrder()
+        {
+            var response = new GetPurchaseOrderResponse();
+            try
+            {
+                var dbResponse = _context.PurchaseOrders.Include(o => o.Customer).ToList().OrderByDescending(o=>o.DateCreated).FirstOrDefault();
+                if (dbResponse != null)
+                {
+                    var purchaseOrderModel = _mapper.Map<PurchaseOrderModel>(dbResponse);
+                    response.PurchaseOrder = purchaseOrderModel;
+                    response.Success = true;
+                    response.Result = new Result(BaseResponseCodes.Success);
+                }
+            }
+            catch (Exception ex)
+            {
+                response.Success = false;
+                response.Result = new Result(BaseResponseCodes.ErrorProcessingRequest);
+            }
+            
+            return response;
+        }
     }
 }

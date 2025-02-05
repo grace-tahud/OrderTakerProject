@@ -47,22 +47,17 @@
                     </div>
                     
                 </div>
-                
-               
-
             </div>
-
-
         </div>
     </div>
 
     <div class="container-fluid">
         <div class="row">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addPurchaseItemModal" id="addPurchaseItem">
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addItemUpdateOrderModal" id="addPurchaseItem">
                 Add Item
             </button>
             <div class="col-6 align-self-center">
-                <div id="itemsLayout1">
+                <div id="updateItemsLayout">
                     @{
                         if (Model.PurchaseItems != null && Model.PurchaseItems.Any())
                         {
@@ -98,7 +93,7 @@
                         }
                     }
                 </div>
-                <button type="button" class="btn btn-primary" onclick="return UpdateOrder();">Save Order</button>
+                <button type="button" id="updateOrder" disabled class="btn btn-primary" onclick="return UpdateOrder();">Update Order</button>
                 
             </div>
 
@@ -110,5 +105,6 @@
 }
 
 
-<partial name="_AddPurchaseItem.cshtml" />
+<partial name="_AddItemUpdateOrder.cshtml" />
+@* <partial name="_AddPurchaseItem.cshtml" /> *@
 <partial name="_UpdatePurchaseItem.cshtml" />

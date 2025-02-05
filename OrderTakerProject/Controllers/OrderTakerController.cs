@@ -134,6 +134,8 @@ namespace OrderTakerProject.Controllers
 
         #endregion
 
+
+        #region SKU
         [Route("SaveSKU")]
         [HttpPost]
         public SaveSKUResponse SaveSKU(SaveSKURequest request)
@@ -238,7 +240,7 @@ namespace OrderTakerProject.Controllers
             return response;
         }
 
-        
+        #endregion
 
         [Route("SavePurchaseOrder")]
         [HttpPost]
@@ -323,7 +325,29 @@ namespace OrderTakerProject.Controllers
             return response;
         }
 
-        
+        [Route("GetLatestOrder")]
+        [HttpPost]
+        public GetPurchaseOrderResponse GetLatestOrder()
+        {
+            var response = new GetPurchaseOrderResponse();
+
+            try
+            {
+                response = purchaseOrderService.GetLatestOrder();
+            }
+            catch (Exception ex)
+            {
+                response.Result = new Result
+                {
+                    Code = BaseResponseCodes.ErrorProcessingRequest.ToInt(),
+                    Description = $"{BaseResponseCodes.ErrorProcessingRequest.StringValue()} {ex.Message}"
+                };
+
+            }
+
+           
+            return response;
+        }
 
         [Route("SavePurchaseItem")]
         [HttpPost]

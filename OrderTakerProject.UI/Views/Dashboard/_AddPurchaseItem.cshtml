@@ -1,40 +1,44 @@
 ﻿@model OrderTakerProject.UI.Models.OrderViewModel
 
-
-<div class="modal fade" id="addPurchaseItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Add Item</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <label class="form-label">SKU</label>
-                    <input class="form-control" id="PurchaseItem_SKUName" />
-                    <input type="hidden" class="form-control" id="PurchaseItem_SKUId" />
-                    <span asp-validation-for="PurchaseItem.SKUId" class="text-danger"></span>
-                    <br />
-                    <label asp-for="PurchaseItem.Quantity" class="form-label">Quantity</label>
-                    <input asp-for="PurchaseItem.Quantity" class="form-control" id="PurchaseItem_Quantity" />
-                    <span asp-validation-for="PurchaseItem.Quantity" class="text-danger"></span>
-                    <br />
-                    <label asp-for="PurchaseItem.Price" class="form-label">Price</label>
-                    <input asp-for="PurchaseItem.Price" class="form-control" readonly id="PurchaseItem_Price" />
-                    <span asp-validation-for="PurchaseItem.Price" class="text-danger"></span>
-                    <input type="hidden" class="form-control" id="PurchaseItem_UnitPrice" />
-                    <br />
-                    @* <label asp-for="Customer.City" class="form-label">City <small class="text-danger">*</small></label>
+@{
+    
+    <div class="modal fade" id="addPurchaseItemModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Add Item</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <input class="form-control" type="hidden" id="Order_NewId"/>
+                        <label class="form-label">SKU</label>
+                        <input class="form-control" id="PurchaseItem_SKUName" />
+                        <input type="hidden" class="form-control" id="PurchaseItem_SKUId" />
+                        <span asp-validation-for="PurchaseItem.SKUId" class="text-danger"></span>
+                        <br />
+                        <label asp-for="PurchaseItem.Quantity" class="form-label">Quantity</label>
+                        <input asp-for="PurchaseItem.Quantity" class="form-control" id="PurchaseItem_Quantity" />
+                        <span asp-validation-for="PurchaseItem.Quantity" class="text-danger"></span>
+                        <br />
+                        <label asp-for="PurchaseItem.Price" class="form-label">Price</label>
+                        <input asp-for="PurchaseItem.Price" class="form-control" readonly id="PurchaseItem_Price" />
+                        <span asp-validation-for="PurchaseItem.Price" class="text-danger"></span>
+                        <input type="hidden" class="form-control" id="PurchaseItem_UnitPrice" />
+                        <br />
+                        @* <label asp-for="Customer.City" class="form-label">City <small class="text-danger">*</small></label>
                     <input asp-for="Customer.City" class="form-control" id="City" />
                     <span asp-validation-for="Customer.City" class="text-danger"></span> *@
-                </form>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-primary" onclick="return AddItem();">Save</button>
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="return AddItem();">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+}

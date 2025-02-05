@@ -243,6 +243,18 @@ $("#PurchaseItem_Quantity").on("input", function () {
     }
 });
 
+$("#UpdateOrderPurchaseItem_Quantity").on("input", function () {
+    var initialPrice = $("#UpdateOrderPurchaseItem_Price").val();
+    if ($("#UpdateOrderPurchaseItem_Quantity").val() > 1) {
+        this.value = this.value.replace(/[^0-9\.]/g, '');
+        //console.log(initialPrice);
+        var quantity = this.value;
+        $("#UpdateOrderPurchaseItem_Price").val(quantity * initialPrice);
+    } else {
+        $("#UpdateOrderPurchaseItem_Price").val(initialPrice);
+    }
+});
+
 function AddOrder() {
 
     var orderRequest = {
@@ -261,7 +273,6 @@ function AddOrder() {
 
         success: function (result) {
             $('#addPurchaseItem').removeAttr("disabled")
-           
             $("#messageLayout").toggle();
            
         },
@@ -273,9 +284,6 @@ function AddOrder() {
 
 
 }
-
-
-
 
 function UpdateOrder() {
 
@@ -312,7 +320,7 @@ function UpdateOrder() {
 function UpdateOrderAmountDue() {
     var amountDue = $('#Order_AmountDue').val();
 
-    if (amountDue == 0 || amountDue == '') {
+    if (amountDue == null) {
         amountDue = $('#UpdateOrderAmount').val();
     }
 
@@ -348,28 +356,43 @@ function UpdateOrderAmountDue() {
 }
 
 
+
+function openAddPurchaseItemModal(){
+    
+    $.ajax({
+        url: 'https://localhost:7043/api/order/taker/GetLatestOrder',
+        type: 'POST',
+        contentType: 'application/json; charset=UTF-8',
+        dataType: "json",
+        /*data: JSON.stringify(request),*/
+        success: function (item) {
+            //console.log(item);
+            $('#addPurchaseItemModal').modal('show');
+            $('#Order_NewId').val(item.purchaseOrder.id);
+
+        },
+        error: function (errormessage) {
+            console.log(errormessage);
+        }
+    });
+}
+
+
 $(document).ready(function () {
     $("#initialSaveButton").on('click', function () {
         $(this).hide();
     });
 });
-//$(document).ready(function () {
 
-//    var purchaseOrderId = $('#UpdateOrderId').val()
-//});
 function AddItem() {
-    var purchaseOrderId = $('#Order_NewId').val();
-    if (purchaseOrderId == '' || purchaseOrderId == 0 || typeof value === "undefined") {
-        purchaseOrderId = $('#UpdateOrderId').val()
-    }
-    console.log(purchaseOrderId);
+   
     var itemRequest = {
-        PurchaseOrderId: purchaseOrderId,
+        PurchaseOrderId: $('#Order_NewId').val(),
         SKUId: $('#PurchaseItem_SKUId').val(),
         Quantity: $('#PurchaseItem_Quantity').val(),
         Price: $('#PurchaseItem_Price').val()
     };
-
+    console.log($('#Order_NewId').val());
     //var purchaseOrderId = $('#Order_NewId').val();
     $.ajax({
         url: "https://localhost:7043/api/order/taker/SavePurchaseItem",
@@ -389,17 +412,16 @@ function AddItem() {
                 url: "https://localhost:7109/Dashboard/PurchaseItemList",
                 type: "GET",
                 data: {
-                    purchaseOrderId: purchaseOrderId,
+                    purchaseOrderId: $('#Order_NewId').val(),
 
                 },
                 success: function (data) {
                     $('#itemsLayout').html(data);
-                    $('#itemsLayout1').html(data);
                     $('#saveOrder').removeAttr("disabled")
-
+                    
 
                     var purchaseItemRequest = {
-                        PurchaseOrderId: purchaseOrderId
+                        PurchaseOrderId: $('#Order_NewId').val()
                     };
                    // console.log(purchaseItemRequest);
                     $.ajax({
@@ -410,9 +432,9 @@ function AddItem() {
                         dataType: "json",
 
                         success: function (result) {
-                            console.log(result.totalPurchaseAmount);
+                            //console.log(result.totalPurchaseAmount);
                             $('#Order_AmountDue').val(result.totalPurchaseAmount);
-                            $('#UpdateOrderAmount').val(result.totalPurchaseAmount);
+                            //$('#UpdateOrderAmount').val(result.totalPurchaseAmount);
                             
                             $(this).hide();
                         },
@@ -434,6 +456,87 @@ function AddItem() {
             $('#PurchaseItem_SKUName').val('');
             $('#PurchaseItem_Quantity').val('');
             $('#PurchaseItem_Price').val('');
+
+        },
+        error: function (errormessage) {
+
+            console.log(errormessage);
+        }
+    });
+}
+
+function AddItemUpdateOrder() {
+
+    var itemRequest = {
+        PurchaseOrderId: $('#Update_ExistingOrderId').val(),
+        SKUId: $('#UpdateOrderPurchaseItem_SKUId').val(),
+        Quantity: $('#UpdateOrderPurchaseItem_Quantity').val(),
+        Price: $('#UpdateOrderPurchaseItem_Price').val()
+    };
+    console.log($('#Update_ExistingOrderId').val());
+    //var purchaseOrderId = $('#Order_NewId').val();
+    $.ajax({
+        url: "https://localhost:7043/api/order/taker/SavePurchaseItem",
+        data: JSON.stringify(itemRequest),
+        type: "POST",
+        contentType: 'application/json; charset=UTF-8',
+        dataType: "json",
+
+        success: function (result) {
+            //var purchaseOrderId = $('#Order_NewId').val();
+            //console.log(result);
+            if (result.code == 99) {
+                alert('You already selected that item.');
+            }
+            $.ajax({
+
+                url: "https://localhost:7109/Dashboard/PurchaseItemList",
+                type: "GET",
+                data: {
+                    purchaseOrderId: $('#Update_ExistingOrderId').val(),
+
+                },
+                success: function (data) {
+                    $('#updateItemsLayout').html(data);
+                    $('#updateOrder').removeAttr("disabled")
+
+
+                    var purchaseItemRequest = {
+                        PurchaseOrderId: $('#Update_ExistingOrderId').val()
+                    };
+                    // console.log(purchaseItemRequest);
+                    $.ajax({
+                        url: "https://localhost:7043/api/order/taker/GetPurchaseItemsByOrder",
+                        data: JSON.stringify(purchaseItemRequest),
+                        type: "POST",
+                        contentType: 'application/json; charset=UTF-8',
+                        dataType: "json",
+
+                        success: function (result) {
+                            //console.log(result.totalPurchaseAmount);
+                            $('#UpdateOrderAmount').val(result.totalPurchaseAmount);
+                            //$('#UpdateOrderAmount').val(result.totalPurchaseAmount);
+
+                            $(this).hide();
+                        },
+                        error: function (errormessage) {
+
+                            console.log(errormessage);
+                        }
+                    });
+
+                },
+                error: function (errormessage) {
+
+                    console.log(errormessage);
+                }
+            })
+
+            $('#addItemUpdateOrderModal').modal('hide');
+
+            $('#UpdateOrderPurchaseItem_SKUName').val('');
+            $('#UpdateOrderPurchaseItem_Quantity').val('');
+            $('#UpdateOrderPurchaseItem_Price').val('');
 
         },
         error: function (errormessage) {
@@ -502,7 +605,7 @@ function UpdateItem() {
 
                 },
                 success: function (data) {
-                    $('#itemsLayout').html(data);
+                    $('#itemsLayout1').html(data);
                     
 
 

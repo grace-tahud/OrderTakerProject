@@ -19,6 +19,7 @@ namespace OrderTakerProject.Core.Models.DTOs
         public int CustomerId { get; set; }
         public string CustomerName { get; set; }
         public DateTime DateOfDelivery { get; set; }
+        public DateTime DateCreated { get; set; }
         public string Status { get; set; }
         public decimal AmountDue { get; set; }
         public bool IsActive { get; set; }

@@ -138,33 +138,33 @@ namespace OrderTakerProject.UI.Services.Implementation
                 var stringBody = purchaseOrderListResponse.Content.ReadAsStringAsync();
                 purchaseOrders = await purchaseOrderListResponse.Content.ReadFromJsonAsync<GetPurchaseOrdersResponse>();
                 response.PurchaseOrders = purchaseOrders.PurchaseOrders;
-                response.PurchaseOrder = purchaseOrders.PurchaseOrders.OrderByDescending(o => o.Id).FirstOrDefault();
+                response.PurchaseOrder = purchaseOrders.PurchaseOrders.OrderByDescending(o => o.DateCreated).FirstOrDefault();
             }
-            var purchaseOrder = purchaseOrders.PurchaseOrders.OrderByDescending(o => o.Id).FirstOrDefault();
-            var itemsRequest = new GetPurchaseItemsRequest
-            {
-                PurchaseOrderId = purchaseOrder != null ? purchaseOrder.Id + 1: 1
-            };
+            //var purchaseOrder = purchaseOrders.PurchaseOrders.OrderByDescending(o => o.DateCreated).FirstOrDefault();
+            //var itemsRequest = new GetPurchaseItemsRequest
+            //{
+            //    PurchaseOrderId = purchaseOrder != null ? purchaseOrder.Id + 1: 1
+            //};
 
-            var httpRequest1 = new HttpRequestMessage
-            {
-                Method = HttpMethod.Post,
-                RequestUri = new Uri("https://localhost:7043/api/order/taker/GetPurchaseItemsByOrder"),
-                Content = new StringContent(JsonConvert.SerializeObject(itemsRequest))
-                {
-                    Headers =
-                    {
-                        ContentType = new MediaTypeHeaderValue("application/json")
-                    }
-                }
+            //var httpRequest1 = new HttpRequestMessage
+            //{
+            //    Method = HttpMethod.Post,
+            //    RequestUri = new Uri("https://localhost:7043/api/order/taker/GetPurchaseItemsByOrder"),
+            //    Content = new StringContent(JsonConvert.SerializeObject(itemsRequest))
+            //    {
+            //        Headers =
+            //        {
+            //            ContentType = new MediaTypeHeaderValue("application/json")
+            //        }
+            //    }
 
-            };
-            using (var purchaseItemsListResponse = await _httpClient.SendAsync(httpRequest1))
-            {
-                var stringBody = purchaseItemsListResponse.Content.ReadAsStringAsync();
-                var purchaseItems = await purchaseItemsListResponse.Content.ReadFromJsonAsync<GetPurchaseItemsResponse>();
-                response.PurchaseItems = purchaseItems.PurchaseItems;
-            }
+            //};
+            //using (var purchaseItemsListResponse = await _httpClient.SendAsync(httpRequest1))
+            //{
+            //    var stringBody = purchaseItemsListResponse.Content.ReadAsStringAsync();
+            //    var purchaseItems = await purchaseItemsListResponse.Content.ReadFromJsonAsync<GetPurchaseItemsResponse>();
+            //    response.PurchaseItems = purchaseItems.PurchaseItems;
+            //}
             return response;
         }
 

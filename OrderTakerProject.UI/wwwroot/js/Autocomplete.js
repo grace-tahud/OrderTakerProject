@@ -204,6 +204,60 @@ $(document).ready(function () {
         }
 
     });
+
+
+    $("#UpdateOrderPurchaseItem_SKUName").autocomplete({
+        appendTo: "#addItemUpdateOrderModal",
+        source: function (request, response) {
+            var request = {
+                Name: request.term
+            };
+            $.ajax({
+                url: 'https://localhost:7043/api/order/taker/GetSKUByName',
+                data: JSON.stringify(request),
+                type: "POST",
+                contentType: 'application/json; charset=UTF-8',
+                dataType: "json",
+                success: function (data) {
+                    console.log(data);
+                    response($.map(data, function (sku) {
+                        //console.log(sku);
+                        if (sku != null) {
+                            return {
+                                label: sku.name,
+                                value: sku.name,
+                                id: sku.id,
+                                price: sku.unitPrice
+
+                            };
+                        } else {
+                            return {
+                                label: '',
+                                value: '',
+                                id: 0,
+                                price: 0
+
+                            };
+                        }
+
+                    }));
+                },
+
+                error: function (xhr, textStatus, errorThrown) {
+                    console.error('Error in fetching autocomplete data: ', textStatus);
+                }
+            });
+        },
+        select: function (event, ui) {
+            $("#UpdateOrderPurchaseItem_SKUId").val(ui.item.id);
+            $("#UpdateOrderPurchaseItem_Quantity").val(1);
+
+            $("#UpdateOrderPurchaseItem_Price").val(ui.item.price);
+            $("#UpdateOrderPurchaseItem_UnitPrice").val(ui.item.price);
+
+        }
+
+    });
 });
 
 $(function () {

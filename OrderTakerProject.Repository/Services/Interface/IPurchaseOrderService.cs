@@ -14,5 +14,6 @@ namespace OrderTakerProject.Repository.Services.Interface
         public UpdatePurchaseOrderResponse UpdatePurchaseOrder(UpdatePurchaseOrderModel model);
         public GetPurchaseOrderResponse GetPurchaseOrderById(int id);
         public GetPurchaseOrdersResponse GetPurchaseOrders();
+        public GetPurchaseOrderResponse GetLatestOrder();
     }
 }
